@@ -228,12 +228,17 @@ const AstrologerProfileModal = ({ astro, onClose }) => {
 
           <div className="profile-rating">
             <span className="stars">⭐⭐⭐⭐⭐</span>
-            <span className="rating-text">{astro.rating || "4.9"} ({astro.reviews || "850"} reviews)</span>
+            <span className="rating-text">{astro.averageRating || "4.9"} ({astro.totalReviews || "850"} reviews)</span>
           </div>
 
           <span className={`status-badge ${astro.availabilityStatus || 'online'}`}>
             <span className="status-dot"></span>
-            {astro.availabilityStatus || "Available Now"}
+            {/* {astro.availabilityStatus === "online"} */}
+            {<p>
+  {astro.availabilityStatus === "online"
+    ? "🟢 Online"
+    : "🔴 Offline"}
+</p>}
           </span>
         </div>
 
@@ -350,9 +355,21 @@ const AstrologerList = () => {
   const [callConfig, setCallConfig] = useState({ astrologer: null, type: "voice", channelName: "" });
 
   const { data: astrologers = [], isLoading: loading } = useGetAstrologersQuery();
+
+  // console.log(response);
+
   const [createRechargeOrder, { isLoading: isCreatingOrder }] = useCreateRechargeOrderMutation();
   const [verifyRechargePayment, { isLoading: isVerifyingPayment }] = useVerifyRechargePaymentMutation();
-  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  // const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+  let storedUser = {};
+try {
+  const data = localStorage.getItem("user");
+  storedUser = data && data !== "undefined" ? JSON.parse(data) : {};
+} catch {
+  storedUser = {};
+}
+  
   const callerName = storedUser?.name || "Guest User";
   const candidateUserId =
     storedUser?._id ||
@@ -490,14 +507,14 @@ const AstrologerList = () => {
                 <div className="info-item">
                   <span className="info-icon">⭐</span>
                   <div>
-                    <div className="info-value">{astro.rating || "4.8"}</div>
+                    <div className="info-value">{astro.averageRating || "4.8"}</div>
                     <div className="info-label">Rating</div>
                   </div>
                 </div>
                 <div className="info-item">
                   <span className="info-icon">💬</span>
                   <div>
-                    <div className="info-value">{astro.reviews || "850"}</div>
+                    <div className="info-value">{astro.totalReviews || "850"}</div>
                     <div className="info-label">Reviews</div>
                   </div>
                 </div>
