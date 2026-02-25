@@ -71,6 +71,7 @@ const ProductCard = ({ product }) => {
 // --- Main Section Component ---
 const AstroShopSection = () => {
   const { data: products = [], isLoading: loading, isError } = useGetProductsQuery();
+  // console.log("Fetched products:", products); // Debugging log
 
   // Animation for the container to stagger children
   const containerVariants = {

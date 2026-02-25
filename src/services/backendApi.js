@@ -58,6 +58,7 @@ export const backendApi = createApi({
       query: () => "/api/products/all",
       transformResponse: (response) => response?.data || [],
       providesTags: ["Products"],
+
     }),
     getPoojas: builder.query({
       query: () => "/api/All-poojas",
