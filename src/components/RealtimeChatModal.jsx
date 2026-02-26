@@ -5,7 +5,7 @@ import {
   useSendPrivateChatMessageMutation,
 } from "../services/backendApi";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://backend.kalpjyotish.com";
 
 const RealtimeChatModal = ({ isOpen, onClose, astrologer, userId, onInsufficientBalance = null }) => {
   const [message, setMessage] = useState("");

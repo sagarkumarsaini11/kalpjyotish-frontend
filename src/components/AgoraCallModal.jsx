@@ -8,7 +8,7 @@ import {
 } from "../services/backendApi";
 import "./AgoraCallModal.css";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://backend.kalpjyotish.com";
 
 const buildAgoraChannelName = (callType, astrologerId, userId) => {
   const safeType = String(callType || "voice").replace(/[^a-zA-Z0-9_]/g, "").slice(0, 8);
