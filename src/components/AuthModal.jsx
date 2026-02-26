@@ -453,7 +453,7 @@ import "./AuthModal.css";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  import.meta.env.VITE_API_BASE_URL || "https://backend.kalpjyotish.com";
 
 export default function AuthModal({ onClose, isLoggedIn, user }) {
   const [step, setStep] = useState("mobile");
@@ -647,58 +647,105 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
   };
 
   /* ---------------- VERIFY OTP ---------------- */
+  // const verifyOtp = async () => {
+  //   try {
+  //     setLoading(true);
+
+  //     const result = await window.confirmationResult.confirm(otp);
+  //     const firebaseUser = result.user;
+
+  //     let backendUser = null;
+  //     let backendToken = null;
+  //     try {
+  //       const backendResp = await fetch(`${API_BASE_URL}/api/otp/verify-otp`, {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ phone: mobile, otp }),
+  //       });
+  //       const backendData = await backendResp.json();
+  //       if (backendData?.success) {
+  //         backendUser = backendData?.data?.user || null;
+  //         backendToken = backendData?.data?.token || null;
+  //       }
+  //     } catch {
+  //       // keep firebase-only session fallback
+  //     }
+
+  //     const sessionUser = {
+  //       _id: backendUser?._id || null,
+  //       id: backendUser?._id || firebaseUser.uid,
+  //       name: backendUser?.name || name?.trim() || "User",
+  //       mobileNo: backendUser?.mobileNo || mobile,
+  //       phoneNumber: firebaseUser.phoneNumber,
+  //     };
+
+  //     localStorage.setItem("user", JSON.stringify(sessionUser));
+  //     if (backendUser?._id) {
+  //       localStorage.setItem("backendUserId", backendUser._id);
+  //       localStorage.setItem("userId", backendUser._id);
+  //     }
+  //     if (backendToken) {
+  //       localStorage.setItem("authToken", backendToken);
+  //     }
+  //     localStorage.setItem("isLoggedIn", "true");
+  //     localStorage.setItem("authRole", "user");
+
+  //     onClose();
+  //     navigate("/user-profile");
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Invalid OTP");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
   const verifyOtp = async () => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const result = await window.confirmationResult.confirm(otp);
-      const firebaseUser = result.user;
+    // ✅ Firebase OTP verify
+    const result = await window.confirmationResult.confirm(otp);
+    const firebaseUser = result.user;
 
-      let backendUser = null;
-      let backendToken = null;
-      try {
-        const backendResp = await fetch(`${API_BASE_URL}/api/otp/verify-otp`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone: mobile, otp: "1234" }),
-        });
-        const backendData = await backendResp.json();
-        if (backendData?.success) {
-          backendUser = backendData?.data?.user || null;
-          backendToken = backendData?.data?.token || null;
-        }
-      } catch {
-        // keep firebase-only session fallback
-      }
+    console.log("Firebase User:", firebaseUser);
 
-      const sessionUser = {
-        _id: backendUser?._id || null,
-        id: backendUser?._id || firebaseUser.uid,
-        name: backendUser?.name || name?.trim() || "User",
-        mobileNo: backendUser?.mobileNo || mobile,
-        phoneNumber: firebaseUser.phoneNumber,
-      };
+    // ✅ Send to backend (NO OTP)
+    const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone: mobile,
+        firebaseUid: firebaseUser.uid,
+        name: name || "User",
+      }),
+    });
 
-      localStorage.setItem("user", JSON.stringify(sessionUser));
-      if (backendUser?._id) {
-        localStorage.setItem("backendUserId", backendUser._id);
-        localStorage.setItem("userId", backendUser._id);
-      }
-      if (backendToken) {
-        localStorage.setItem("authToken", backendToken);
-      }
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("authRole", "user");
+    const data = await backendResp.json();
+    console.log("Backend Response:", data);
 
-      onClose();
-      navigate("/user-profile");
-    } catch (err) {
-      console.error(err);
-      alert("Invalid OTP");
-    } finally {
-      setLoading(false);
+    if (!data.success) {
+      throw new Error(data.message);
     }
-  };
+
+    // ✅ Save session
+    localStorage.setItem("user", JSON.stringify(data.data.user));
+    localStorage.setItem("authToken", data.data.token);
+    localStorage.setItem("isLoggedIn", "true");
+
+    onClose();
+    navigate("/user-profile");
+  } catch (err) {
+    console.error(err);
+    setError("OTP verification failed");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   /* ---------------- GOOGLE LOGIN ---------------- */
   const handleGoogleLogin = async () => {
