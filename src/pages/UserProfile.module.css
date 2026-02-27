@@ -16,6 +16,16 @@
     flex-direction: column;
 }
 
+.closeSidebar {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+    margin-left: auto;
+}
+
 .userCard {
     text-align: center;
     padding-bottom: 30px;
@@ -111,6 +121,17 @@
     background-color: white;
     padding: 10px 40px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.hamburger {
+    font-size: 26px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none;
 }
 
 .contentHeader h1 {
@@ -733,12 +754,39 @@
 /* Responsive */
 @media (max-width: 768px) {
     .profileContainer {
-        flex-direction: column;
+        display: flex;
     }
 
     .profileSidebar {
-        width: 100%;
+        position: fixed;
+        top: 70px;
+        /* adjust if navbar height is 70px */
+        left: -300px;
+        width: 260px;
+        height: calc(100vh - 70px);
+        background: white;
+        z-index: 999;
+        transition: left 0.3s ease;
         padding: 20px;
+    }
+
+    .sidebarOpen {
+        left: 0;
+    }
+    .closeSidebar {
+        display: inline-block;
+    }
+
+    .hamburger {
+        font-size: 26px;
+        background: none;
+        color: #333;
+        cursor: pointer;
+        display: block;
+    }
+    
+    .contentHeader {
+        padding: 10px 20px;
     }
 
     .contentBody {
@@ -760,6 +808,9 @@
     .profileHeader {
         flex-direction: column;
         gap: 20px;
+    }
+    .profileTab{
+        padding: 10px;
     }
 
     .quickAmounts {
