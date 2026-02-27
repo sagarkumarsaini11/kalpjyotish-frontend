@@ -769,33 +769,79 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
   //   }
   // };
 
+  //   const verifyOtp = async () => {
+  //     try {
+  //       setLoading(true);
+
+  //       // ✅ Firebase OTP verify
+  //       const result = await window.confirmationResult.confirm(otp);
+  //       const firebaseUser = result.user;
+
+  //       console.log("Firebase User:", firebaseUser);
+
+  //     // ✅ Send to backend (NO OTP)
+  //     const Token = await firebaseUser.getIdToken();
+  //     console.log("ID Token:", Token);
+
+  // const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     idToken: firebaseUser.accessToken,
+  //     firebaseUid: firebaseUser.uid,
+  //     phone: firebaseUser.phoneNumber,
+  //   }),
+  // });
+
+  //  console.log("ID Token:", idToken);
+
+  //       const data = await backendResp.json();
+  //       console.log("Backend Response:", data);
+
+  //       if (!data.success) {
+  //         throw new Error(data.message);
+  //       }
+
+  //       // ✅ Save session
+  //       localStorage.setItem("user", JSON.stringify(data.data.user));
+  //       localStorage.setItem("authToken", data.data.token);
+  //       localStorage.setItem("isLoggedIn", "true");
+
+  //       onClose();
+  //       navigate("/user-profile");
+  //     } catch (err) {
+  //       console.error(err);
+  //       setError("OTP verification failed");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
   const verifyOtp = async () => {
     try {
       setLoading(true);
 
-      // ✅ Firebase OTP verify
+      // ✅ Step 1: Confirm OTP with Firebase
       const result = await window.confirmationResult.confirm(otp);
       const firebaseUser = result.user;
-
       console.log("Firebase User:", firebaseUser);
 
-    // ✅ Send to backend (NO OTP)
-    const Token = await firebaseUser.getIdToken();
-    console.log("ID Token:", Token);
+      // ✅ Step 2: Get proper ID token
+      const idToken = await firebaseUser.getIdToken();
+      console.log("ID Token:", idToken);
 
-const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    idToken: firebaseUser.accessToken,
-    firebaseUid: firebaseUser.uid,
-    phone: firebaseUser.phoneNumber,
-  }),
-});
-
- console.log("ID Token:", idToken);
+      // ✅ Step 3: Send to backend
+      const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idToken: idToken, // ✅ correct token
+          firebaseUid: firebaseUser.uid,
+          phone: firebaseUser.phoneNumber,
+        }),
+      });
 
       const data = await backendResp.json();
       console.log("Backend Response:", data);
@@ -804,7 +850,7 @@ const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
         throw new Error(data.message);
       }
 
-      // ✅ Save session
+      // ✅ Step 4: Save session
       localStorage.setItem("user", JSON.stringify(data.data.user));
       localStorage.setItem("authToken", data.data.token);
       localStorage.setItem("isLoggedIn", "true");
@@ -813,7 +859,7 @@ const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
       navigate("/user-profile");
     } catch (err) {
       console.error(err);
-      setError("OTP verification failed");
+      setError("OTP verification failed: " + err.message);
     } finally {
       setLoading(false);
     }
