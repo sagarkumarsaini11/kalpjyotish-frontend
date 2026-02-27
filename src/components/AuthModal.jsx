@@ -1,4 +1,3 @@
-
 // import React, { useState, useEffect } from "react";
 // import { motion } from "framer-motion";
 // import { IoClose } from "react-icons/io5";
@@ -440,7 +439,7 @@
 
 // ===========================================
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { IoClose } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
@@ -463,7 +462,9 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState("");
+  const recaptchaRef = useRef(null);
   const navigate = useNavigate();
 
   /* ---------------- REDIRECT IF LOGGED IN ---------------- */
@@ -524,44 +525,61 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
   //   }
   // };
 
-  const setupRecaptcha = async () => {
+  const setupRecaptcha = () => {
     try {
-      // 🔥 IMPORTANT: always clear old instance (only if it's a firebase verifier)
+      // 1. Clear any existing global verifier
       if (window.recaptchaVerifier) {
-        if (typeof window.recaptchaVerifier.clear === "function") {
-          try {
-            window.recaptchaVerifier.clear();
-          } catch (clearErr) {
-            console.warn("recaptchaVerifier.clear() failed:", clearErr);
-          }
-        }
+        window.recaptchaVerifier.clear();
         window.recaptchaVerifier = null;
       }
 
-      if (!RecaptchaVerifier) {
-        throw new Error("RecaptchaVerifier is not available");
-      }
-      if (!auth) {
-        throw new Error("Firebase auth instance is not initialized");
-      }
+      // 2. Clear the container HTML
+      const container = document.getElementById("recaptcha-container");
+      if (container) container.innerHTML = "";
 
+      // 3. Initialize fresh
+      auth.useDeviceLanguage();
       window.recaptchaVerifier = new RecaptchaVerifier(
-        auth, // auth FIRST
-        "recaptcha-container", // container second
-        { size: "invisible" }, // options third
+        auth,
+        "recaptcha-container",
+        {
+          size: "normal",
+          callback: (response) => {
+            console.log("reCAPTCHA solved:", response);
+            setIsVerified(true);
+          },
+          "expired-callback": () => {
+            setIsVerified(false);
+            setupRecaptcha();
+          },
+        },
       );
 
-      try {
-        await window.recaptchaVerifier.render();
-      } catch (renderErr) {
-        console.error("reCAPTCHA render failed:", renderErr);
-        throw renderErr;
-      }
+      return window.recaptchaVerifier.render();
     } catch (err) {
-      console.error("reCAPTCHA setup failed:", err);
-      throw err;
+      console.error("reCAPTCHA Init Error:", err);
     }
   };
+
+  useEffect(() => {
+    // Wait for modal animation to settle before initializing recaptcha
+    const timer = setTimeout(() => {
+      if (step === "mobile") {
+        setupRecaptcha();
+      }
+    }, 800);
+
+    return () => {
+      clearTimeout(timer);
+      if (window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier.clear();
+        } catch (e) {}
+        window.recaptchaVerifier = null;
+      }
+      setIsVerified(false); // Reset verification on cleanup
+    };
+  }, [step]);
 
   // const setupRecaptcha = async () => {
   //   if (!window.recaptchaVerifier) {
@@ -583,20 +601,30 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
 
   /* ---------------- SEND OTP (from second code) ---------------- */
   const sendOtp = async () => {
+    if (!navigator.onLine) {
+      setError("No internet connection. Please check your network.");
+      return;
+    }
+
+    if (mobile.length !== 10) {
+      setError("Please enter a valid 10-digit number.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setMessage("");
+
     try {
-      if (mobile.length !== 10) {
-        setError("Please enter valid number");
+      // Use the global window instance which is more stable for phone auth
+      const appVerifier = window.recaptchaVerifier;
+      if (!appVerifier || !isVerified) {
+        setError("Please verify the reCAPTCHA checkbox first.");
         return;
       }
 
-      setLoading(true);
-      setError("");
-
-      await setupRecaptcha();
-
       const phoneNumber = `+91${mobile}`;
-      const appVerifier = window.recaptchaVerifier;
-
+      console.log("SENDING OTP TO:", phoneNumber);
       const confirmationResult = await signInWithPhoneNumber(
         auth,
         phoneNumber,
@@ -604,16 +632,56 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
       );
 
       window.confirmationResult = confirmationResult;
-
-      setMessage("OTP sent successfully");
+      setMessage("OTP sent successfully!");
       setStep("otp");
     } catch (err) {
       console.error("OTP ERROR:", err);
-      setError(err.message);
+
+      // Reset reCAPTCHA on error so the user must solve it again
+      setIsVerified(false);
+      if (window.recaptchaVerifier) {
+        setupRecaptcha();
+      }
+
+      if (
+        err.code === "auth/invalid-app-credential" ||
+        err.message?.includes("INVALID_APP_CREDENTIAL")
+      ) {
+        setError(
+          "Authentication Error: Please ensure 'localhost' is added to 'Authorized Domains' in Firebase Console -> Authentication -> Settings.",
+        );
+      } else if (err.message?.includes("already-rendered")) {
+        setError("Connection lag. Please try clicking once more.");
+      } else if (err.code === "auth/too-many-requests") {
+        setError("Too many attempts. Please try again later.");
+      } else if (err.code === "auth/network-request-failed") {
+        setError("Network error. Please check your internet connection.");
+      } else {
+        setError(err.message || "Failed to send OTP. Try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const handleOnline = () => setError("");
+    const handleOffline = () => setError("You are currently offline.");
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+      if (window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier.clear();
+        } catch (e) {}
+        window.recaptchaVerifier = null;
+      }
+    };
+  }, []);
 
   /* ---------------- REGISTER USER (BACKEND) ---------------- */
   // const registerUser = async () => {
@@ -701,52 +769,50 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
   //   }
   // };
 
-
   const verifyOtp = async () => {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    // ✅ Firebase OTP verify
-    const result = await window.confirmationResult.confirm(otp);
-    const firebaseUser = result.user;
+      // ✅ Firebase OTP verify
+      const result = await window.confirmationResult.confirm(otp);
+      const firebaseUser = result.user;
 
-    console.log("Firebase User:", firebaseUser);
+      console.log("Firebase User:", firebaseUser);
 
-    // ✅ Send to backend (NO OTP)
-    const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        phone: mobile,
-        firebaseUid: firebaseUser.uid,
-        name: name || "User",
-      }),
-    });
+      // ✅ Send to backend (NO OTP)
+      const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: mobile,
+          firebaseUid: firebaseUser.uid,
+          name: name || "User",
+        }),
+      });
 
-    const data = await backendResp.json();
-    console.log("Backend Response:", data);
+      const data = await backendResp.json();
+      console.log("Backend Response:", data);
 
-    if (!data.success) {
-      throw new Error(data.message);
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+
+      // ✅ Save session
+      localStorage.setItem("user", JSON.stringify(data.data.user));
+      localStorage.setItem("authToken", data.data.token);
+      localStorage.setItem("isLoggedIn", "true");
+
+      onClose();
+      navigate("/user-profile");
+    } catch (err) {
+      console.error(err);
+      setError("OTP verification failed");
+    } finally {
+      setLoading(false);
     }
-
-    // ✅ Save session
-    localStorage.setItem("user", JSON.stringify(data.data.user));
-    localStorage.setItem("authToken", data.data.token);
-    localStorage.setItem("isLoggedIn", "true");
-
-    onClose();
-    navigate("/user-profile");
-  } catch (err) {
-    console.error(err);
-    setError("OTP verification failed");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   /* ---------------- GOOGLE LOGIN ---------------- */
   const handleGoogleLogin = async () => {
@@ -845,6 +911,12 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
           {error && <p className="error-text">{error}</p>}
           {message && <p className="info-text">{message}</p>}
 
+          <div
+            id="recaptcha-container"
+            className="recaptcha-box"
+            style={{ display: step === "mobile" ? "flex" : "none" }}
+          ></div>
+
           {step === "mobile" && (
             <>
               <h2>Log In</h2>
@@ -858,11 +930,12 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
                 onChange={(e) => {
                   setMobile(e.target.value.replace(/\D/g, ""));
                   setError("");
+                  setIsVerified(false); // Force re-verification if number changes
                 }}
               />
 
               <button
-                disabled={mobile.length !== 10 || loading}
+                disabled={mobile.length !== 10 || loading || !isVerified}
                 onClick={sendOtp}
                 className="primary-btn"
               >
@@ -978,7 +1051,6 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
         </div>
 
         {/* 🔥 REQUIRED FOR FIREBASE reCAPTCHA */}
-        <div id="recaptcha-container"></div>
       </motion.div>
     </div>
   );

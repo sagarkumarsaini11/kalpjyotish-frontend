@@ -73,8 +73,6 @@
     }
 } */
 
-
-
 /* .auth-backdrop {
   position: fixed;
   inset: 0;
@@ -192,7 +190,6 @@
     text-align: center;
   }
 } */
-
 
 /* Backdrop - Fixed */
 .auth-backdrop {
@@ -467,5 +464,19 @@
   .auth-right h2,
   .auth-right h3 {
     font-size: 22px;
+  }
+}
+
+/* reCAPTCHA Box Styling */
+.recaptcha-box {
+  margin: 10px 0 20px 0;
+  display: flex;
+  justify-content: center;
+  transform-origin: center;
+}
+
+@media (max-width: 480px) {
+  .recaptcha-box {
+    transform: scale(0.85);
   }
 }
