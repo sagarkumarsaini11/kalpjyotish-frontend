@@ -779,8 +779,8 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
 
       console.log("Firebase User:", firebaseUser);
 
-      // ✅ Send to backend (NO OTP)
-   const idToken = await firebaseUser.getIdToken();
+    // ✅ Send to backend (NO OTP)
+    const idToken = await firebaseUser.getIdToken();
 
 const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
   method: "POST",
