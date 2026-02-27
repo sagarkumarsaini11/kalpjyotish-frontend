@@ -9,6 +9,8 @@ import {
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('profile');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const navigate = useNavigate();
 
   const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
@@ -125,10 +127,10 @@ const UserProfile = () => {
               <div className={styles.amount}>?{chat.amount}</div>
             </div>
             <div className={styles.historyCardBody}>
-              <div className={styles.historyDetail}><span className={styles.icon}>??</span><span>{chat.date}</span></div>
-              <div className={styles.historyDetail}><span className={styles.icon}>??</span><span>{chat.time}</span></div>
-              <div className={styles.historyDetail}><span className={styles.icon}>??</span><span>{chat.duration}</span></div>
-              <div className={styles.historyDetail}><span className={styles.icon}>??</span><span>{chat.status}</span></div>
+              <div className={styles.historyDetail}><span className={styles.icon}></span><span>{chat.date}</span></div>
+              <div className={styles.historyDetail}><span className={styles.icon}></span><span>{chat.time}</span></div>
+              <div className={styles.historyDetail}><span className={styles.icon}></span><span>{chat.duration}</span></div>
+              <div className={styles.historyDetail}><span className={styles.icon}></span><span>{chat.status}</span></div>
             </div>
           </div>
         ))}
@@ -141,14 +143,14 @@ const UserProfile = () => {
       <div className={styles.walletBalance}>
         <div className={styles.balanceCard}>
           <h3>Wallet Balance</h3>
-          <h1>?{walletBalance.toFixed(2)}</h1>
+          <h1>₹{walletBalance.toFixed(2)}</h1>
           <p>Free Minutes: {freeMinutes.toFixed(2)}</p>
           <button className={styles.rechargeBtn} onClick={() => navigate('/astro-connect')}>Use Credits</button>
         </div>
 
         <div className={styles.walletStats}>
-          <div className={styles.statBox}><span className={styles.statIcon}>??</span><div><p>Credits</p><h4>?{walletBalance.toFixed(2)}</h4></div></div>
-          <div className={styles.statBox}><span className={styles.statIcon}>??</span><div><p>Free Minutes</p><h4>{freeMinutes.toFixed(2)}</h4></div></div>
+          <div className={styles.statBox}><span className={styles.statIcon}></span><div><p>Credits</p><h4>{walletBalance.toFixed(2)}</h4></div></div>
+          <div className={styles.statBox}><span className={styles.statIcon}></span><div><p>Free Minutes</p><h4>{freeMinutes.toFixed(2)}</h4></div></div>
         </div>
       </div>
 
@@ -158,12 +160,12 @@ const UserProfile = () => {
           {historyItems.length === 0 ? <div className={styles.transactionItem}>No usage history available.</div> : null}
           {historyItems.map((transaction) => (
             <div key={transaction.id} className={styles.transactionItem}>
-              <div className={styles.transactionIcon}>??</div>
+              <div className={styles.transactionIcon}></div>
               <div className={styles.transactionDetails}>
                 <h4>{transaction.astrologer}</h4>
                 <p>{transaction.date} at {transaction.time}</p>
               </div>
-              <div className={`${styles.transactionAmount} ${styles.debit}`}>-?{transaction.amount}</div>
+              <div className={`${styles.transactionAmount} ${styles.debit}`}>-{transaction.amount}</div>
             </div>
           ))}
         </div>
@@ -173,25 +175,31 @@ const UserProfile = () => {
 
   return (
     <div className={styles.profileContainer}>
-      <div className={styles.profileSidebar}>
+      <div className={`${styles.profileSidebar} ${isSidebarOpen ? styles.sidebarOpen : ''}`}>
+        <button
+          className={styles.closeSidebar}
+          onClick={() => setIsSidebarOpen(false)}
+        >
+          ✕
+        </button>
         <div className={styles.userCard}>
           <img src={userData.profileImage} alt='User' className={styles.userAvatar} />
           <h3>{userData.name}</h3>
           <p>{userData.email}</p>
-          <p>Credits: ?{walletBalance.toFixed(2)}</p>
+          <p>Credits: {walletBalance.toFixed(2)}</p>
         </div>
 
         <nav className={styles.profileNav}>
           <button className={`${styles.navItem} ${activeTab === 'profile' ? styles.active : ''}`} onClick={() => setActiveTab('profile')}>
-            <span className={styles.navIcon}>??</span>
+            <span className={styles.navIcon}></span>
             My Profile
           </button>
           <button className={`${styles.navItem} ${activeTab === 'history' ? styles.active : ''}`} onClick={() => setActiveTab('history')}>
-            <span className={styles.navIcon}>??</span>
+            <span className={styles.navIcon}></span>
             History
           </button>
           <button className={`${styles.navItem} ${activeTab === 'wallet' ? styles.active : ''}`} onClick={() => setActiveTab('wallet')}>
-            <span className={styles.navIcon}>??</span>
+            <span className={styles.navIcon}></span>
             Credits
           </button>
         </nav>
@@ -209,13 +217,19 @@ const UserProfile = () => {
             navigate('/');
           }}
         >
-          <span className={styles.navIcon}>??</span>
+          {/* <span className={styles.navIcon}>??</span> */}
           Logout
         </button>
       </div>
 
       <div className={styles.profileContent}>
         <div className={styles.contentHeader}>
+          <button
+            className={styles.hamburger}
+            onClick={() => setIsSidebarOpen(prev => !prev)}  // ← toggle
+          >
+            ☰
+          </button>
           <h1>
             {activeTab === 'profile' && 'My Profile'}
             {activeTab === 'history' && 'Consultation History'}

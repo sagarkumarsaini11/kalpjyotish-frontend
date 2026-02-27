@@ -26,6 +26,7 @@ const AstrologerDashboard = () => {
   });
   const [updateCallStatus] = useUpdateCallSessionStatusMutation();
   const astrologerData = profileData || localAstro || {};
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     setRingingCall(incomingCalls[0] || null);
@@ -69,64 +70,77 @@ const AstrologerDashboard = () => {
 
   return (
     <div className={styles.dashboardContainer}>
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarHeader}>
-          <h2>KalpJyotish</h2>
-          <p>Astrologer Portal</p>
-        </div>
 
-        <div className={styles.astrologerInfo}>
-          <div className={styles.avatarContainer}>
-            <img src={astrologerData.profilePhoto || astrologerData.profileImage || "/assets/user-avatar.png"} alt="Profile" />
-            <span className={styles.onlineStatus}></span>
+        <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ""}`}>
+          <div className={styles.sidebarHeader}>
+            <h2>KalpJyotish</h2>
+            <p>Astrologer Portal</p>
+            <button
+              className={styles.closeSidebar}
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              ✕
+            </button>
           </div>
-          <h3>{astrologerData.name || "Astrologer"}</h3>
-          <p>{Array.isArray(astrologerData.skills) ? astrologerData.skills.join(", ") : astrologerData.specialization || "-"}</p>
-          <div className={styles.rating}>
-            <span>⭐ {astrologerData.averageRating || astrologerData.rating || 0}</span>
-            <span>{astrologerData.totalReviews || astrologerData.totalConsultations || 0} consultations</span>
+
+          <div className={styles.astrologerInfo}>
+            <div className={styles.avatarContainer}>
+              <img src={astrologerData.profilePhoto || astrologerData.profileImage || "/assets/user-avatar.png"} alt="Profile" />
+              <span className={styles.onlineStatus}></span>
+            </div>
+            <h3>{astrologerData.name || "Astrologer"}</h3>
+            <p>{Array.isArray(astrologerData.skills) ? astrologerData.skills.join(", ") : astrologerData.specialization || "-"}</p>
+            <div className={styles.rating}>
+              <span>⭐ {astrologerData.averageRating || astrologerData.rating || 0}</span>
+              <span>{astrologerData.totalReviews || astrologerData.totalConsultations || 0} consultations</span>
+            </div>
           </div>
-        </div>
 
-        <nav className={styles.navigation}>
-          <button className={`${styles.navItem} ${activeTab === "chat" ? styles.active : ""}`} onClick={() => setActiveTab("chat")}>
-            <span className={styles.icon}>💬</span>
-            Chat with Customers
-          </button>
-          <button className={`${styles.navItem} ${activeTab === "wallet" ? styles.active : ""}`} onClick={() => setActiveTab("wallet")}>
-            <span className={styles.icon}>💰</span>
-            My Wallet
-          </button>
-          <button className={`${styles.navItem} ${activeTab === "earnings" ? styles.active : ""}`} onClick={() => setActiveTab("earnings")}>
-            <span className={styles.icon}>📊</span>
-            Earnings
-          </button>
-          <button className={`${styles.navItem} ${activeTab === "profile" ? styles.active : ""}`} onClick={() => setActiveTab("profile")}>
-            <span className={styles.icon}>👤</span>
-            My Profile
-          </button>
-        </nav>
+          <nav className={styles.navigation}>
+            <button className={`${styles.navItem} ${activeTab === "chat" ? styles.active : ""}`} onClick={() => setActiveTab("chat")}>
+              <span className={styles.icon}>💬</span>
+              Chat with Customers
+            </button>
+            <button className={`${styles.navItem} ${activeTab === "wallet" ? styles.active : ""}`} onClick={() => setActiveTab("wallet")}>
+              <span className={styles.icon}>💰</span>
+              My Wallet
+            </button>
+            <button className={`${styles.navItem} ${activeTab === "earnings" ? styles.active : ""}`} onClick={() => setActiveTab("earnings")}>
+              <span className={styles.icon}>📊</span>
+              Earnings
+            </button>
+            <button className={`${styles.navItem} ${activeTab === "profile" ? styles.active : ""}`} onClick={() => setActiveTab("profile")}>
+              <span className={styles.icon}>👤</span>
+              My Profile
+            </button>
+          </nav>
 
-        <div className={styles.logoutSection}>
-          <button
-            className={styles.logoutBtn}
-            onClick={() => {
-              localStorage.removeItem("user");
-              localStorage.removeItem("token");
-              localStorage.removeItem("authToken");
-              localStorage.removeItem("isLoggedIn");
-              localStorage.removeItem("authRole");
-              window.location.href = "/";
-            }}
-          >
-            <span className={styles.icon}>🚪</span>
-            Logout
-          </button>
-        </div>
-      </aside>
+          <div className={styles.logoutSection}>
+            <button
+              className={styles.logoutBtn}
+              onClick={() => {
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("isLoggedIn");
+                localStorage.removeItem("authRole");
+                window.location.href = "/";
+              }}
+            >
+              <span className={styles.icon}>🚪</span>
+              Logout
+            </button>
+          </div>
+        </aside>
 
       <main className={styles.mainContent}>
         <header className={styles.header}>
+          <button
+            className={styles.hamburger}
+            onClick={() => setIsSidebarOpen(prev => !prev)}  // ← toggle
+          >
+            ☰
+          </button>
           <h1>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h1>
         </header>
         <div className={styles.contentArea}>{renderContent()}</div>

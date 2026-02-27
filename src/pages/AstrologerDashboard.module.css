@@ -96,7 +96,6 @@
     background: none;
     border: none;
     color: white;
-    text-align: left;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -156,7 +155,8 @@
     padding: 10px 30px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
+    gap: 12px;
     align-items: center;
 }
 
@@ -240,6 +240,7 @@
         transform: scale(1);
         opacity: 1;
     }
+
     100% {
         transform: scale(1.35);
         opacity: 0.65;
@@ -282,10 +283,55 @@
     color: #fff;
 }
 
+.hamburger {
+    font-size: 26px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none;
+}
+
+.closeSidebar {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    font: bold;
+    cursor: pointer;
+    color: white;
+    margin-left: auto;
+}
+
+
+
 /* Responsive */
 @media (max-width: 768px) {
+
+    /* Sidebar hidden by sliding (NOT display:none) */
     .sidebar {
-        width: 70px;
+        position: fixed;
+        top: 20;
+        left: -260px;
+        text-align: left;
+        height: 90vh;
+        width: 260px;
+        z-index: 999;
+        transition: left 0.3s ease;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    }
+
+    /* When sidebar is open */
+    .sidebarOpen {
+        left: 0;
+    }
+
+    .mainContent {
+        width: 100%;
+    }
+
+    .closeSidebar {
+        display: inline-block;
     }
 
     .sidebarHeader h2,
@@ -295,8 +341,12 @@
         display: none;
     }
 
-    .navItem {
-        justify-content: center;
+    .hamburger {
+        font-size: 26px;
+        background: none;
+        color: #333;
+        cursor: pointer;
+        display: block;
     }
 
     .incomingCallPopup {

@@ -201,6 +201,7 @@
 @media (max-width: 900px) {
   .contact-container {
     grid-template-columns: 1fr;
+    padding: 50px 10px;
   }
 
   .contact-title {
@@ -286,8 +287,8 @@
   }
 
   .contact-form-card {
-    padding: 20px;
-    max-width: 90%;
+    /* padding: 10px; */
+    max-width: 100%;
   }
 
   .form-card-header h2 {
@@ -309,7 +310,7 @@
   }
 
   .submit-query-button {
-    width: 100%;
+    width: 50%;
     font-size: 1em;
     padding: 12px 20px;
   }
@@ -355,10 +356,6 @@
   .section-heading {
     font-size: 1.8em;
     margin-bottom: 30px;
-  }
-
-  .contact-form-card {
-    padding: 15px;
   }
 
   .form-card-header h2 {
