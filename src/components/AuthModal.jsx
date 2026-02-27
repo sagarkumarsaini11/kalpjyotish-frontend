@@ -788,9 +788,13 @@ const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    idToken
+    idToken: firebaseUser.accessToken,
+    firebaseUid: firebaseUser.uid,
+    phone: firebaseUser.phoneNumber,
   }),
 });
+
+ console.log("ID Token:", idToken);
 
       const data = await backendResp.json();
       console.log("Backend Response:", data);
