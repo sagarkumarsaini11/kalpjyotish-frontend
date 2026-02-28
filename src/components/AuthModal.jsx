@@ -981,7 +981,7 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
 
           {step === "mobile" && (
             <>
-              <h2>Log In</h2>
+              <h2>Log In 2</h2>
               <p className="subtitle">Enter your mobile number to continue</p>
 
               <input
