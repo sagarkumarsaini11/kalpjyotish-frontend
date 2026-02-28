@@ -450,7 +450,7 @@ import { auth, googleProvider } from "../firebase";
 import "./AuthModal.css";
 
 // 🔥 Firebase imports
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { RecaptchaVerifier, signInWithPhoneNumber, getIdToken } from "firebase/auth";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "https://backend.kalpjyotish.com";
@@ -574,7 +574,7 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
       if (window.recaptchaVerifier) {
         try {
           window.recaptchaVerifier.clear();
-        } catch (e) {}
+        } catch (e) { }
         window.recaptchaVerifier = null;
       }
       setIsVerified(false); // Reset verification on cleanup
@@ -677,7 +677,7 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
       if (window.recaptchaVerifier) {
         try {
           window.recaptchaVerifier.clear();
-        } catch (e) {}
+        } catch (e) { }
         window.recaptchaVerifier = null;
       }
     };
@@ -826,21 +826,32 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
       // ✅ Step 1: Confirm OTP with Firebase
       const result = await window.confirmationResult.confirm(otp);
       const firebaseUser = result.user;
-      console.log("Firebase User:", firebaseUser);
+      console.log("Firebase User Object Details:", {
+        uid: firebaseUser.uid,
+        phoneNumber: firebaseUser.phoneNumber,
+      });
 
-      // ✅ Step 2: Get proper ID token
-      const idToken = await firebaseUser.getIdToken();
-      console.log("ID Token:", idToken);
+      // ✅ Step 2: Get proper ID token using the modular v9 syntax
+      const idToken = await getIdToken(firebaseUser, true);
+      console.log("Extracted ID Token:", idToken ? "Exists (length: " + idToken.length + ")" : "undefined");
+
+      if (!idToken || !firebaseUser.uid || !firebaseUser.phoneNumber) {
+        throw new Error("Missing required Firebase fields before sending to Backend.");
+      }
 
       // ✅ Step 3: Send to backend
+      const payload = {
+        idToken: idToken,
+        firebaseUid: firebaseUser.uid,
+        phone: firebaseUser.phoneNumber,
+      };
+
+      console.log("Payload sending to backend:", payload);
+
       const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          idToken: idToken, // ✅ correct token
-          firebaseUid: firebaseUser.uid,
-          phone: firebaseUser.phoneNumber,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await backendResp.json();
@@ -970,7 +981,7 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
 
           {step === "mobile" && (
             <>
-              <h2>Log In</h2>
+              <h2>Log In 2</h2>
               <p className="subtitle">Enter your mobile number to continue</p>
 
               <input
@@ -1034,7 +1045,7 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
                 onClick={verifyOtp}
                 className="primary-btn"
               >
-                {loading ? "Verifying..." : "Verify & Login"}
+                {loading ? "Verifying..." : "Verify & Login 2"}
               </button>
 
               <button
