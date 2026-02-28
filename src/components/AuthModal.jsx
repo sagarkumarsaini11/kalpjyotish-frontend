@@ -981,7 +981,7 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
 
           {step === "mobile" && (
             <>
-              <h2>Log In 2</h2>
+              <h2>Log In</h2>
               <p className="subtitle">Enter your mobile number to continue</p>
 
               <input
@@ -1045,7 +1045,7 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
                 onClick={verifyOtp}
                 className="primary-btn"
               >
-                {loading ? "Verifying..." : "Verify & Login 2"}
+                {loading ? "Verifying..." : "Verify & Login"}
               </button>
 
               <button
