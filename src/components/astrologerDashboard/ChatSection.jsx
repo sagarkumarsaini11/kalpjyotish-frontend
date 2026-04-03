@@ -9,6 +9,9 @@ import {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://backend.kalpjyotish.com";
 
+// console.log("API_BASE_URL in ChatSection:", API_BASE_URL);
+// console.log(import.meta.env);
+
 const ChatSection = ({ astrologerId }) => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [newMessage, setNewMessage] = useState("");
