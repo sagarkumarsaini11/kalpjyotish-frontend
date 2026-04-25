@@ -1,27 +1,41 @@
 // src/components/NakshatrasSection.jsx
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { nakshatrasData } from '../data/nakshatrasFlippingData.jsx';
-import './NakshatrasSection.css'; // Imports the new styles
+import { FiStar, FiMoon, FiSun, FiCompass, FiInfo } from 'react-icons/fi';
+import './NakshatrasSection.css';
 
 const sectionVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.8, staggerChildren: 0.05 } },
+  visible: { 
+    opacity: 1, 
+    transition: { duration: 0.8, staggerChildren: 0.05 } 
+  },
 };
 
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 120 } },
-  exit: { opacity: 0, transition: { duration: 0.2 } },
+  hidden: { y: 30, opacity: 0, scale: 0.9 },
+  visible: { 
+    y: 0, 
+    opacity: 1, 
+    scale: 1,
+    transition: { type: 'spring', stiffness: 120, damping: 15 } 
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.8,
+    transition: { duration: 0.2 } 
+  },
 };
 
 const NakshatrasSection = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const sectionRef = useRef(null);
 
-  const initialItemCount = isDesktop ? 10 : 6;
+  const initialItemCount = isDesktop ? 12 : 6;
 
   useEffect(() => {
     const handleResize = () => {
@@ -44,29 +58,79 @@ const NakshatrasSection = () => {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
+      ref={sectionRef}
     >
-      {/* --- NEW: Added the container div --- */}
-      <div className="nakshatra-container">
-        <h2 className="nakshatras-title">Nakshatras</h2>
-        <p className="nakshatras-subtitle">
-          Vedic Astrology is based upon Nakshatras. Our ancient sages have written a detailed treatise on them!
-        </p>
+      {/* Cosmic Background */}
+      <div className="nakshatras-bg">
+        <div className="nakshatras-nebula"></div>
+        <div className="nakshatras-stars">
+          {[...Array(40)].map((_, i) => (
+            <div key={i} className="star" style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${Math.random() * 3 + 2}s`
+            }}></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="nakshatras-container">
+        <div className="nakshatras-header">
+          <div className="header-badge">
+            <FiStar />
+            <span>Vedic Astrology</span>
+          </div>
+          <h2 className="nakshatras-title">
+            The 27 <span className="title-highlight">Nakshatras</span>
+          </h2>
+          <p className="nakshatras-subtitle">
+            Vedic Astrology is deeply rooted in the wisdom of Nakshatras. 
+            Our ancient sages have written detailed treatises on these lunar mansions 
+            that hold the keys to your cosmic destiny.
+          </p>
+        </div>
 
         <motion.div layout className="nakshatras-grid">
-          <AnimatePresence>
-            {displayedItems.map((nakshatra) => (
+          <AnimatePresence mode="popLayout">
+            {displayedItems.map((nakshatra, index) => (
               <motion.div
                 key={nakshatra.name}
                 className="nakshatra-item-wrapper"
                 variants={itemVariants}
                 exit="exit"
                 layout
-                whileHover={{ scale: 1.08, zIndex: 1 }}
-                whileTap={{ scale: 0.95 }}
+                onHoverStart={() => setHoveredIndex(index)}
+                onHoverEnd={() => setHoveredIndex(null)}
               >
-                <Link to={nakshatra.link} className="nakshatra-pill">
-                  <span className="nakshatra-pill-icon">{nakshatra.icon}</span>
-                  <span className="nakshatra-pill-name">{nakshatra.name}</span>
+                <Link to={nakshatra.link} className="nakshatra-card">
+                  <div className="card-glow"></div>
+                  
+                  <div className="nakshatra-icon-wrapper">
+                    <div className="icon-ring">
+                      <div className="nakshatra-icon">
+                        {nakshatra.icon || <FiMoon />}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="nakshatra-info">
+                    <h3 className="nakshatra-name">{nakshatra.name}</h3>
+                    {nakshatra.sanskritName && (
+                      <p className="nakshatra-sanskrit">{nakshatra.sanskritName}</p>
+                    )}
+                    <div className="nakshatra-meta">
+                      <span className="meta-ruler">
+                        <FiCompass />
+                        {nakshatra.rulingPlanet || "Unknown"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="card-hover-content">
+                    <FiInfo />
+                    <span>Learn More</span>
+                  </div>
                 </Link>
               </motion.div>
             ))}
@@ -80,9 +144,24 @@ const NakshatrasSection = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            {isExpanded ? 'View Less' : (isDesktop ? 'View All' : 'View More')}
+            <span>{isExpanded ? 'Show Less' : (isDesktop ? 'View All Nakshatras' : 'View More')}</span>
+            <motion.span
+              animate={{ rotate: isExpanded ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+              className="btn-arrow"
+            >
+              ↓
+            </motion.span>
           </motion.button>
         )}
+
+        {/* Info Footer */}
+        <div className="nakshatras-footer">
+          <div className="footer-note">
+            <FiMoon />
+            <span>Each Nakshatra represents a specific constellation and carries unique energies that influence your life path</span>
+          </div>
+        </div>
       </div>
     </motion.section>
   );

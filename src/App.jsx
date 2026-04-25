@@ -26,6 +26,7 @@ import AstrologerLogin from "./pages/AstrologerLogin";
 import AstrologerDashboard from './pages/AstrologerDashboard';
 import UserProfile from './pages/UserProfile';
 import CompleteUserProfile from './components/CompleteUserProfile';
+import LandingPage from './pages/LandingPage';
 
 function App() {
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
@@ -45,12 +46,13 @@ function App() {
           <Route path="/astrologer-dashboard" element={<AstrologerDashboard />} />
           <Route path="/horoscope" element={<DailyHoroscope />} />
           <Route path="/shop" element={<AstroShopSection />} />
-          <Route path="/pooja" element={<PoojaSection />} />
+          <Route path="/pooja" element={<PoojaSection />} /> 
           <Route path="/pooja/:id" element={<PoojaDetails />} />
           <Route path="/zodiac-signs" element={<ZodiacSigns />} />
           <Route path="/astro-connect" element={<AstrologerList />} />
-          <Route path="/Contact-us" element={<Contact />} />
-          <Route path="/remedies" element={<Kundali />} />
+          <Route path="/Contact-us" element={<LandingPage/>} />
+           <Route path="/Landing" element={<LandingPage/>} />
+          <Route path="/remedies" element={<Kundali/>} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/profile/:userId" element={<Profile />} />
           <Route path="/user-profile" element={<UserProfile />} />

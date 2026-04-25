@@ -1,3 +1,4 @@
+// src/components/SignupModal.jsx
 import React, { useState, useRef, useEffect, useMemo, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLoginUserMutation, useSendOtpMutation, useSignupUserMutation, useVerifyOtpMutation } from '../services/backendApi';
@@ -10,9 +11,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { IoClose } from 'react-icons/io5';
 import {
   MdEmail, MdLock, MdPerson, MdCalendarToday, MdAccessTime,
-  MdLocationCity, MdPhone, MdArrowForward, MdExpandMore, MdUploadFile
+  MdLocationCity, MdPhone, MdArrowForward, MdExpandMore, MdUploadFile,
+  MdVerified, MdCheckCircle, MdSecurity
 } from 'react-icons/md';
-import { FaVenusMars } from "react-icons/fa";
+import { FaVenusMars, FaStar, FaMoon, FaSun, FaShieldAlt } from "react-icons/fa";
+import { FiShield, FiCheck } from 'react-icons/fi';
 
 // --- CSS IMPORT ---
 import './SignupModal.css';
@@ -25,12 +28,17 @@ import './SignupModal.css';
 const CustomSelect = ({ icon, placeholder, options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  
   useEffect(() => {
-    const handleClickOutside = (event) => { if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsOpen(false); };
+    const handleClickOutside = (event) => { 
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsOpen(false); 
+    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+  
   const handleSelect = (optionValue) => { onChange(optionValue); setIsOpen(false); };
+  
   return (
     <div className="custom-select-container" ref={dropdownRef}>
       <button type="button" className={`custom-select-trigger ${value ? 'has-value' : ''}`} onClick={() => setIsOpen(!isOpen)}>
@@ -41,7 +49,12 @@ const CustomSelect = ({ icon, placeholder, options, value, onChange }) => {
         {isOpen && (
           <motion.ul className="custom-select-options" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
             <li className="placeholder-option" onClick={() => handleSelect('')}>{placeholder}</li>
-            {options.map((option) => ( <li key={option} className={`option-item ${option === value ? 'selected' : ''}`} onClick={() => handleSelect(option)}>{option}</li> ))}
+            {options.map((option) => ( 
+              <li key={option} className={`option-item ${option === value ? 'selected' : ''}`} onClick={() => handleSelect(option)}>
+                {option}
+                {option === value && <FiCheck className="check-icon" />}
+              </li> 
+            ))}
           </motion.ul>
         )}
       </AnimatePresence>
@@ -66,18 +79,24 @@ const CustomTimePicker = ({ icon, placeholder, value, onChange }) => {
     }
     return times;
   }, []);
+  
   useEffect(() => {
-    const handleClickOutside = (event) => { if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsOpen(false); };
+    const handleClickOutside = (event) => { 
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsOpen(false); 
+    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+  
   useEffect(() => {
     if (isOpen && value && listRef.current) {
       const selectedElement = listRef.current.querySelector('.selected');
       if (selectedElement) { selectedElement.scrollIntoView({ block: 'center' }); }
     }
   }, [isOpen, value]);
+  
   const handleSelect = (timeValue) => { onChange(timeValue); setIsOpen(false); };
+  
   return (
     <div className="custom-select-container" ref={dropdownRef}>
       <button type="button" className={`custom-select-trigger ${value ? 'has-value' : ''}`} onClick={() => setIsOpen(!isOpen)}>
@@ -87,10 +106,16 @@ const CustomTimePicker = ({ icon, placeholder, value, onChange }) => {
       <AnimatePresence>
         {isOpen && (
           <motion.div className="custom-time-picker-options" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-            <div className="custom-time-picker-header">Time</div>
+            <div className="custom-time-picker-header">
+              <FaMoon className="header-icon" />
+              <span>Select Time of Birth</span>
+              <FaSun className="header-icon" />
+            </div>
             <ul ref={listRef} className="custom-time-picker-list">
               {timeOptions.map((time) => (
-                <li key={time} className={`option-item ${time === value ? 'selected' : ''}`} onClick={() => handleSelect(time)}>{time}</li>
+                <li key={time} className={`option-item ${time === value ? 'selected' : ''}`} onClick={() => handleSelect(time)}>
+                  {time}
+                </li>
               ))}
             </ul>
           </motion.div>
@@ -108,27 +133,149 @@ const DatePickerCustomInput = forwardRef(({ value, onClick, icon, placeholder },
   </div>
 ));
 
-// --- AuthStepOne Component (wrapper removed) ---
-const AuthStepOne = ({ authMode, setAuthMode, email, setEmail, password, setPassword, handleSendOtp, handleLogin, isLoading, error }) => ( <AnimatePresence mode="wait">{authMode === 'signup' ? ( <motion.div key="signup" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><h2>Create Your Account</h2><p>First, let's verify your email address.</p><form onSubmit={handleSendOtp}><div className="form-group"><MdEmail className="input-icon" /><input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>{error && <p className="error-msg">{error}</p>}<button type="submit" className="modal-btn" disabled={isLoading}>{isLoading ? 'Sending...' : 'Send OTP'}</button></form><p className="auth-toggle">Already have an account? <span onClick={() => setAuthMode('login')}>Login</span></p></motion.div> ) : ( <motion.div key="login" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><h2>Welcome Back!</h2><p>Please enter your details to login.</p><form onSubmit={handleLogin}><div className="form-group"><MdEmail className="input-icon" /><input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div><div className="form-group"><MdLock className="input-icon" /><input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>{error && <p className="error-msg">{error}</p>}<button type="submit" className="modal-btn" disabled={isLoading}>{isLoading ? 'Logging In...' : 'Login'}</button></form><p className="auth-toggle">Don't have an account? <span onClick={() => setAuthMode('signup')}>Sign Up</span></p></motion.div> )}</AnimatePresence> );
+// --- Step Components ---
+const AuthStepOne = ({ authMode, setAuthMode, email, setEmail, password, setPassword, handleSendOtp, handleLogin, isLoading, error }) => (
+  <AnimatePresence mode="wait">
+    {authMode === 'signup' ? (
+      <motion.div key="signup" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <div className="step-icon">
+          <FaStar />
+        </div>
+        <h2>Begin Your Journey</h2>
+        <p>Create your account to unlock cosmic insights</p>
+        <form onSubmit={handleSendOtp}>
+          <div className="form-group">
+            <MdEmail className="input-icon" />
+            <input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </div>
+          {error && <p className="error-msg">{error}</p>}
+          <button type="submit" className="modal-btn" disabled={isLoading}>
+            {isLoading ? 'Sending...' : 'Send Verification Code'}
+            {!isLoading && <MdArrowForward />}
+          </button>
+        </form>
+        <p className="auth-toggle">
+          Already have an account? <span onClick={() => setAuthMode('login')}>Sign In</span>
+        </p>
+      </motion.div>
+    ) : (
+      <motion.div key="login" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <div className="step-icon">
+          <FaShieldAlt />
+        </div>
+        <h2>Welcome Back!</h2>
+        <p>Sign in to continue your cosmic journey</p>
+        <form onSubmit={handleLogin}>
+          <div className="form-group">
+            <MdEmail className="input-icon" />
+            <input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </div>
+          <div className="form-group">
+            <MdLock className="input-icon" />
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          </div>
+          {error && <p className="error-msg">{error}</p>}
+          <button type="submit" className="modal-btn" disabled={isLoading}>
+            {isLoading ? 'Logging In...' : 'Sign In'}
+            {!isLoading && <MdArrowForward />}
+          </button>
+        </form>
+        <p className="auth-toggle">
+          Don't have an account? <span onClick={() => setAuthMode('signup')}>Create Account</span>
+        </p>
+      </motion.div>
+    )}
+  </AnimatePresence>
+);
 
-// --- AuthStepTwo Component (wrapper removed) ---
-const AuthStepTwo = ({ email, otp, setOtp, handleVerifyOtp, changeStep, isLoading, error }) => ( <><h2>Enter OTP</h2><p>A 6-digit code was sent to <strong>{email}</strong></p><form onSubmit={handleVerifyOtp}><div className="form-group"><MdLock className="input-icon" /><input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} required maxLength="6" /></div>{error && <p className="error-msg">{error}</p>}<button type="submit" className="modal-btn" disabled={isLoading}>{isLoading ? 'Verifying...' : 'Verify & Proceed'}</button></form><a className="back-link" onClick={() => changeStep(1, -1)}>Go Back</a></> );
+const AuthStepTwo = ({ email, otp, setOtp, handleVerifyOtp, changeStep, isLoading, error }) => (
+  <>
+    <div className="step-icon">
+      <MdVerified />
+    </div>
+    <h2>Verify Your Email</h2>
+    <p>A 6-digit code was sent to <strong>{email}</strong></p>
+    <form onSubmit={handleVerifyOtp}>
+      <div className="form-group otp-group">
+        <MdLock className="input-icon" />
+        <input 
+          type="text" 
+          placeholder="Enter 6-digit OTP" 
+          value={otp} 
+          onChange={(e) => setOtp(e.target.value)} 
+          required 
+          maxLength="6"
+          pattern="[0-9]{6}"
+        />
+        <div className="otp-inputs">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className={`otp-digit ${otp[i] ? 'filled' : ''}`}>
+              {otp[i] || '●'}
+            </div>
+          ))}
+        </div>
+      </div>
+      {error && <p className="error-msg">{error}</p>}
+      <button type="submit" className="modal-btn" disabled={isLoading}>
+        {isLoading ? 'Verifying...' : 'Verify & Continue'}
+        {!isLoading && <MdCheckCircle />}
+      </button>
+    </form>
+    <a className="back-link" onClick={() => changeStep(1, -1)}>← Back to Email</a>
+  </>
+);
 
-// --- AuthStepThree Component (wrapper removed) ---
 const AuthStepThree = ({ email, formData, setFormData, handleInputChange, handleSelectChange, handleFileChange, profilePreview, handleSignup, isLoading, error }) => (
   <>
+    <div className="step-icon">
+      <MdPerson />
+    </div>
     <h2>Complete Your Profile</h2>
+    <p>Tell us more about yourself</p>
     <form onSubmit={handleSignup} className="details-form">
-      <div className="form-group"><MdPerson className="input-icon" /><input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleInputChange} required /></div>
-      <div className="form-group"><MdEmail className="input-icon" /><input type="email" name="email" value={email} disabled /></div>
-      <div className="form-group"><MdPhone className="input-icon" /><input type="tel" name="mobileNo" placeholder="Mobile Number" value={formData.mobileNo} onChange={handleInputChange} required /></div>
-      <div className="form-group"><MdLock className="input-icon" /><input type="password" name="password" placeholder="Create Password" value={formData.password} onChange={handleInputChange} required minLength={6} /></div>
-      <div className="form-group"><MdLocationCity className="input-icon" /><input type="text" name="city" placeholder="City" value={formData.city} onChange={handleInputChange} required /></div>
-      <div className="form-group"><CustomSelect icon={<FaVenusMars className="input-icon" />} placeholder="Select Gender" options={['Male', 'Female', 'Other']} value={formData.gender} onChange={(value) => handleSelectChange('gender', value)} /></div>
-      <div className="form-group"><DatePicker selected={formData.dateOfBirth} onChange={(date) => setFormData({ ...formData, dateOfBirth: date })} customInput={<DatePickerCustomInput icon={<MdCalendarToday className="input-icon" />} placeholder="Date of Birth" />} dateFormat="dd / MMMM / yyyy" maxDate={new Date()} showYearDropdown scrollableYearDropdown yearDropdownItemNumber={80} required /></div>
-      <div className="form-group"><CustomTimePicker icon={<MdAccessTime className="input-icon" />} placeholder="Time of Birth" value={formData.timeOfBirth} onChange={(value) => handleSelectChange('timeOfBirth', value)} /></div>
+      <div className="form-group">
+        <MdPerson className="input-icon" />
+        <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleInputChange} required />
+      </div>
+      <div className="form-group">
+        <MdEmail className="input-icon" />
+        <input type="email" name="email" value={email} disabled className="disabled-input" />
+      </div>
+      <div className="form-group">
+        <MdPhone className="input-icon" />
+        <input type="tel" name="mobileNo" placeholder="Mobile Number" value={formData.mobileNo} onChange={handleInputChange} required />
+      </div>
+      <div className="form-group">
+        <MdLock className="input-icon" />
+        <input type="password" name="password" placeholder="Create Password" value={formData.password} onChange={handleInputChange} required minLength={6} />
+      </div>
+      <div className="form-group">
+        <MdLocationCity className="input-icon" />
+        <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleInputChange} required />
+      </div>
+      <div className="form-group">
+        <CustomSelect icon={<FaVenusMars className="input-icon" />} placeholder="Select Gender" options={['Male', 'Female', 'Other']} value={formData.gender} onChange={(value) => handleSelectChange('gender', value)} />
+      </div>
+      <div className="form-group">
+        <DatePicker 
+          selected={formData.dateOfBirth} 
+          onChange={(date) => setFormData({ ...formData, dateOfBirth: date })} 
+          customInput={<DatePickerCustomInput icon={<MdCalendarToday className="input-icon" />} placeholder="Date of Birth" />} 
+          dateFormat="dd/MM/yyyy" 
+          maxDate={new Date()} 
+          showYearDropdown 
+          scrollableYearDropdown 
+          yearDropdownItemNumber={80} 
+          required 
+        />
+      </div>
+      <div className="form-group">
+        <CustomTimePicker icon={<MdAccessTime className="input-icon" />} placeholder="Time of Birth" value={formData.timeOfBirth} onChange={(value) => handleSelectChange('timeOfBirth', value)} />
+      </div>
       <div className="form-group file-group">
-        <div className="upload-box-label"><MdUploadFile /> Upload Profile Picture</div>
+        <div className="upload-box-label">
+          <MdUploadFile /> Upload Profile Picture
+        </div>
         <div className="file-input-wrapper">
           <input id="profile-upload" type="file" name="profile" accept="image/*" onChange={handleFileChange} />
           <label htmlFor="profile-upload" className="file-choose-btn">Choose File</label>
@@ -137,18 +284,31 @@ const AuthStepThree = ({ email, formData, setFormData, handleInputChange, handle
         {profilePreview && <img src={profilePreview} alt="Preview" className="profile-preview" />}
       </div>
       {error && <p className="error-msg">{error}</p>}
-      <div className="form-group">
-        <button type="submit" className="modal-btn" disabled={isLoading}>
-          <span>{isLoading ? 'Creating Account...' : 'Create Account'}</span>{!isLoading && <MdArrowForward />}
-        </button>
-      </div>
+      <button type="submit" className="modal-btn" disabled={isLoading}>
+        <span>{isLoading ? 'Creating Account...' : 'Create Account'}</span>
+        {!isLoading && <MdArrowForward />}
+      </button>
     </form>
   </>
 );
 
-// --- AuthStepFour Component (wrapper removed) ---
-const AuthStepFour = ({ authMode }) => ( <div className="success-message"><h2>Success!</h2><p>{authMode === 'login' ? 'You are now logged in.' : 'Your account has been created.'}</p></div> );
-
+const AuthStepFour = ({ authMode }) => (
+  <div className="success-message">
+    <div className="success-animation">
+      <motion.div 
+        className="success-circle"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+      >
+        <FiCheck />
+      </motion.div>
+    </div>
+    <h2>Welcome to KalpJyotish!</h2>
+    <p>{authMode === 'login' ? 'You have successfully logged in.' : 'Your account has been created successfully.'}</p>
+    <p className="success-note">You can now explore our astrological services</p>
+  </div>
+);
 
 // ====================================================================
 // --- MAIN MODAL COMPONENT ---
@@ -161,21 +321,47 @@ const SignupModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
-  const [formData, setFormData] = useState({ name: '', gender: '', city: '', mobileNo: '', password: '', profile: null, dateOfBirth: null, timeOfBirth: '' });
+  const [formData, setFormData] = useState({ 
+    name: '', gender: '', city: '', mobileNo: '', password: '', 
+    profile: null, dateOfBirth: null, timeOfBirth: '' 
+  });
   const [profilePreview, setProfilePreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  
   const [sendOtpMutation] = useSendOtpMutation();
   const [verifyOtpMutation] = useVerifyOtpMutation();
   const [loginUserMutation] = useLoginUserMutation();
   const [signupUserMutation] = useSignupUserMutation();
 
-  // Handlers & API calls
   const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
   const handleSelectChange = (name, value) => setFormData({ ...formData, [name]: value });
-  const handleFileChange = (e) => { const file = e.target.files[0]; if (file) { setFormData({ ...formData, profile: file }); setProfilePreview(URL.createObjectURL(file)); } };
-  const resetState = () => { setStep(1); setAuthMode('signup'); setEmail(''); setPassword(''); setOtp(''); setFormData({ name: '', gender: '', city: '', mobileNo: '', password: '', profile: null, dateOfBirth: null, timeOfBirth: '' }); setProfilePreview(null); setError(''); setIsLoading(false); onClose(); };
-  const changeStep = (newStep, newDirection = 1) => { setDirection(newDirection); setStep(newStep); };
+  const handleFileChange = (e) => { 
+    const file = e.target.files[0]; 
+    if (file) { 
+      setFormData({ ...formData, profile: file }); 
+      setProfilePreview(URL.createObjectURL(file)); 
+    } 
+  };
+  
+  const resetState = () => { 
+    setStep(1); 
+    setAuthMode('signup'); 
+    setEmail(''); 
+    setPassword(''); 
+    setOtp(''); 
+    setFormData({ name: '', gender: '', city: '', mobileNo: '', password: '', profile: null, dateOfBirth: null, timeOfBirth: '' }); 
+    setProfilePreview(null); 
+    setError(''); 
+    setIsLoading(false); 
+    onClose(); 
+  };
+  
+  const changeStep = (newStep, newDirection = 1) => { 
+    setDirection(newDirection); 
+    setStep(newStep); 
+  };
+  
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setError('');
@@ -198,11 +384,12 @@ const SignupModal = ({ isOpen, onClose }) => {
       await verifyOtpMutation({ email, otp }).unwrap();
       changeStep(3);
     } catch (err) {
-      setError(err?.data?.message || 'Invalid OTP.');
+      setError(err?.data?.message || 'Invalid OTP. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
@@ -219,13 +406,14 @@ const SignupModal = ({ isOpen, onClose }) => {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('authRole', 'user');
       changeStep(4);
-      setTimeout(resetState, 2000);
+      setTimeout(resetState, 3000);
     } catch (err) {
-      setError(err?.data?.message || 'Login failed.');
+      setError(err?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
   };
+  
   const handleSignup = async (e) => {
     e.preventDefault();
     setError('');
@@ -255,35 +443,89 @@ const SignupModal = ({ isOpen, onClose }) => {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('authRole', 'user');
       changeStep(4);
-      setTimeout(resetState, 2000);
+      setTimeout(resetState, 3000);
     } catch (err) {
-      setError(err?.data?.message || 'Signup failed.');
+      setError(err?.data?.message || 'Signup failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
   
-  // Dynamic Render Logic
-  const renderStep = () => { switch (step) { case 1: return <AuthStepOne {...{ authMode, setAuthMode, email, setEmail, password, setPassword, handleSendOtp, handleLogin, isLoading, error }} />; case 2: return <AuthStepTwo {...{ email, otp, setOtp, handleVerifyOtp, changeStep, isLoading, error }} />; case 3: return <AuthStepThree {...{ email, formData, setFormData, handleInputChange, handleSelectChange, handleFileChange, profilePreview, handleSignup, isLoading, error }} />; case 4: return <AuthStepFour {...{ authMode }} />; default: return null; } };
+  const renderStep = () => { 
+    switch (step) { 
+      case 1: return <AuthStepOne {...{ authMode, setAuthMode, email, setEmail, password, setPassword, handleSendOtp, handleLogin, isLoading, error }} />; 
+      case 2: return <AuthStepTwo {...{ email, otp, setOtp, handleVerifyOtp, changeStep, isLoading, error }} />; 
+      case 3: return <AuthStepThree {...{ email, formData, setFormData, handleInputChange, handleSelectChange, handleFileChange, profilePreview, handleSignup, isLoading, error }} />; 
+      case 4: return <AuthStepFour {...{ authMode }} />; 
+      default: return null; 
+    } 
+  };
   
-  // Animation & Final JSX
-  const modalVariants = { hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { type: "spring", damping: 25, stiffness: 180 } }, exit: { opacity: 0, scale: 0.95, transition: { duration: 0.2 } }, };
-  const stepVariants = { enter: (direction) => ({ x: direction > 0 ? 300 : -300, opacity: 0 }), center: { x: 0, opacity: 1, transition: { type: "tween", ease: "circOut", duration: 0.5 } }, exit: (direction) => ({ x: direction < 0 ? 300 : -300, opacity: 0, transition: { type: "tween", ease: "circIn", duration: 0.3 } }), };
+  const modalVariants = { 
+    hidden: { opacity: 0, scale: 0.95 }, 
+    visible: { opacity: 1, scale: 1, transition: { type: "spring", damping: 25, stiffness: 180 } }, 
+    exit: { opacity: 0, scale: 0.95, transition: { duration: 0.2 } }, 
+  };
+  
+  const stepVariants = { 
+    enter: (direction) => ({ x: direction > 0 ? 300 : -300, opacity: 0 }), 
+    center: { x: 0, opacity: 1, transition: { type: "tween", ease: "circOut", duration: 0.5 } }, 
+    exit: (direction) => ({ x: direction < 0 ? 300 : -300, opacity: 0, transition: { type: "tween", ease: "circIn", duration: 0.3 } }), 
+  };
   
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div className="modal-backdrop" onClick={resetState}>
-          <motion.div className="modal-content" variants={modalVariants} initial="hidden" animate="visible" exit="exit" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={resetState}><IoClose /></button>
-            {/* --- NEW: Persistent Scroll Container --- */}
-            <div className="modal-body">
+        <motion.div className="signup-modal-backdrop" onClick={resetState}>
+          <motion.div className="signup-modal-content" variants={modalVariants} initial="hidden" animate="visible" exit="exit" onClick={(e) => e.stopPropagation()}>
+            
+            {/* Cosmic Background Effect */}
+            <div className="modal-cosmic-bg">
+              <div className="modal-star"></div>
+              <div className="modal-star"></div>
+              <div className="modal-star"></div>
+              <div className="modal-star"></div>
+            </div>
+            
+            <button className="modal-close-btn" onClick={resetState}>
+              <IoClose />
+            </button>
+            
+            <div className="signup-modal-body">
+              {/* Progress Indicator */}
+              {step < 4 && (
+                <div className="modal-progress">
+                  <div className={`progress-step ${step >= 1 ? 'active' : ''}`}>
+                    <span>1</span>
+                    <label>Email</label>
+                  </div>
+                  <div className={`progress-line ${step >= 2 ? 'active' : ''}`}></div>
+                  <div className={`progress-step ${step >= 2 ? 'active' : ''}`}>
+                    <span>2</span>
+                    <label>Verify</label>
+                  </div>
+                  <div className={`progress-line ${step >= 3 ? 'active' : ''}`}></div>
+                  <div className={`progress-step ${step >= 3 ? 'active' : ''}`}>
+                    <span>3</span>
+                    <label>Profile</label>
+                  </div>
+                </div>
+              )}
+              
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div key={step} custom={direction} variants={stepVariants} initial="enter" animate="center" exit="exit">
                   {renderStep()}
                 </motion.div>
               </AnimatePresence>
             </div>
+            
+            {/* Security Note */}
+            {step < 4 && (
+              <div className="modal-footer-note">
+                <FiShield />
+                <span>Your information is secure and protected</span>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

@@ -1,62 +1,239 @@
+/* src/components/ConsultationTopics.css */
 
 :root {
-  --image-bg: #000;
-  --image-container-bg: #610161;
-  --image-primary: #FFB833;
-  --image-text: white;
+  --consultation-gold: #ffd700;
+  --consultation-gold-dark: #f59e0b;
+  --consultation-purple: #6b21e5;
+  --consultation-purple-dark: #4c1d95;
+  --consultation-bg: #000000;
+  --consultation-card-bg: rgba(26, 11, 46, 0.8);
+  --consultation-text: #ffffff;
+  --consultation-text-muted: #c9b3e0;
+  --consultation-border: rgba(255, 215, 0, 0.15);
 }
+
+/* ========================================
+   MAIN SECTION
+======================================== */
 
 .consultation-section {
-  padding: 2rem 2rem;
-  background-color: #000;
-  text-align: center;
-  width: 100%;
-  overflow-x: hidden;
+  position: relative;
+  padding: 5rem 2rem;
+  background: linear-gradient(180deg, #0a0a0a 0%, #1a0b2e 100%);
+  overflow: hidden;
 }
 
+/* Cosmic Background */
+.consultation-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.consultation-nebula {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, var(--consultation-purple), transparent);
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.15;
+  top: 20%;
+  left: -10%;
+  animation: floatNebula 20s ease-in-out infinite;
+}
+
+@keyframes floatNebula {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+}
+
+.consultation-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.consultation-stars .star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.5);
+  }
+}
+
+/* ========================================
+   CONTAINER
+======================================== */
+
 .consultation-container {
+  position: relative;
+  z-index: 10;
+  max-width: 1400px;
+  margin: 0 auto;
   padding: 3rem 2rem;
-  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 48px;
+}
+
+/* ========================================
+   SECTION HEADER
+======================================== */
+
+.section-header {
+  text-align: center;
   margin-bottom: 3rem;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid var(--consultation-border);
+  border-radius: 50px;
+  margin-bottom: 1rem;
+}
+
+.header-badge svg {
+  color: var(--consultation-gold);
+  width: 14px;
+  height: 14px;
+}
+
+.header-badge span {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--consultation-gold);
+  letter-spacing: 1px;
 }
 
 .consultation-main-title {
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 700;
-  color: var(--image-primary);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
+  color: var(--consultation-text);
 }
+
+.title-highlight {
+  background: linear-gradient(135deg, var(--consultation-gold), var(--consultation-gold-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.consultation-subtitle {
+  font-size: 1rem;
+  color: var(--consultation-text-muted);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ========================================
+   GRID
+======================================== */
 
 .consultation-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
-  width: 100%;
+  margin-bottom: 2rem;
 }
 
-/* CARD */
+/* ========================================
+   CARD
+======================================== */
+
 .consultation-item {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
   text-decoration: none;
-  background-color: #610161;
-  padding: 2.5rem 1.5rem;
-  border-radius: 16px;
-  width: 100%;
+  background: var(--consultation-card-bg);
+  backdrop-filter: blur(20px);
+  padding: 2rem 1.5rem;
+  border-radius: 24px;
+  border: 1px solid var(--consultation-border);
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
 .consultation-item:hover {
-  box-shadow: 0 10px 40px 0px #610161;
+  transform: translateY(-8px);
+  border-color: var(--consultation-gold);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
+/* Card Effects */
+.card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 215, 0, 0.08), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.consultation-item:hover .card-glow {
+  opacity: 1;
+}
+
+.card-shine {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.03) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+  pointer-events: none;
+}
+
+.consultation-item:hover .card-shine {
+  transform: translateX(100%);
+}
+
+/* Icon Wrapper */
 .consultation-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.icon-ring {
   position: relative;
   width: 120px;
   height: 120px;
@@ -66,67 +243,255 @@
   align-items: center;
 }
 
-.consultation-icon-wrapper::before {
+.icon-ring::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -3px;
   border-radius: 50%;
-  border: 2px dashed rgba(255, 255, 255, 0.7);
+  background: linear-gradient(135deg, var(--consultation-gold), var(--consultation-purple));
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
+.consultation-item:hover .icon-ring::before {
+  opacity: 1;
+  animation: rotateRing 2s linear infinite;
+}
+
+@keyframes rotateRing {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Icon */
 .consultation-icon {
   width: 100px;
   height: 100px;
-  background: #fff;
+  background: linear-gradient(135deg, var(--consultation-gold), var(--consultation-gold-dark));
   border-radius: 50%;
-  font-size: 50px;
-  color: #ff7a00;
+  font-size: 2.5rem;
+  color: #1a0a2e;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2;
+  transition: transform 0.3s ease;
 }
 
-/* HOVER EFFECT */
-/* .consultation-item:hover .consultation-icon-wrapper {
-  box-shadow: 0 0 20px -5px white;
-} */
+.consultation-item:hover .consultation-icon {
+  transform: scale(1.1);
+}
 
+/* Title */
 .consultation-title {
-  color: white;
-  font-size: 1.5rem;
+  color: var(--consultation-text);
+  font-size: 1.2rem;
   font-weight: 700;
   text-align: center;
+  transition: color 0.3s ease;
+}
+
+.consultation-item:hover .consultation-title {
+  color: var(--consultation-gold);
+}
+
+/* Hover Content */
+.consultation-hover-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, var(--consultation-gold), var(--consultation-gold-dark));
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  color: #1a0a2e;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 0 0 24px 24px;
+}
+
+.consultation-item:hover .consultation-hover-content {
+  transform: translateY(0);
+}
+
+/* ========================================
+   FOOTER
+======================================== */
+
+.consultation-footer {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--consultation-border);
+}
+
+.footer-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--consultation-text-muted);
+}
+
+.footer-note svg {
+  color: var(--consultation-gold);
+  font-size: 1rem;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 1024px) {
+  .consultation-section {
+    padding: 4rem 1.5rem;
+  }
+  
+  .consultation-container {
+    padding: 2rem 1.5rem;
+  }
+  
+  .consultation-grid {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .consultation-section {
+    padding: 3rem 1rem;
+  }
+  
+  .consultation-container {
+    padding: 1.5rem;
+  }
+  
+  .consultation-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+  
+  .icon-ring {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .consultation-icon {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
+  
+  .consultation-title {
+    font-size: 1rem;
+  }
+  
+  .consultation-subtitle {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 576px) {
   .consultation-section {
-    padding: 3rem 1rem;
+    padding: 2rem 0.75rem;
   }
-
-  .consultation-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-    width: 100%;
-  }
-
+  
   .consultation-container {
-    padding: 2rem 1rem;
+    padding: 1rem;
   }
-
-  .consultation-icon-wrapper {
+  
+  .consultation-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .icon-ring {
     width: 80px;
     height: 80px;
   }
-
+  
   .consultation-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
+    width: 65px;
+    height: 65px;
+    font-size: 1.5rem;
   }
-
+  
   .consultation-title {
     font-size: 0.9rem;
+  }
+  
+  .consultation-main-title {
+    font-size: 1.5rem;
+  }
+  
+  .consultation-subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .consultation-hover-content {
+    font-size: 0.7rem;
+    padding: 0.5rem;
+  }
+  
+  .footer-note {
+    flex-direction: column;
+    text-align: center;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .consultation-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .icon-ring {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .consultation-icon {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .consultation-nebula,
+  .consultation-stars .star,
+  .card-shine,
+  .icon-ring::before,
+  .consultation-icon,
+  .consultation-hover-content {
+    animation: none;
+    transition: none;
+  }
+  
+  .consultation-item:hover {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .consultation-item {
+    border: 2px solid var(--consultation-gold);
+  }
+  
+  .consultation-icon {
+    background: var(--consultation-gold);
+    color: black;
   }
 }

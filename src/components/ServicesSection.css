@@ -1,60 +1,243 @@
+/* src/components/ServicesSection.css */
+
+/* ========================================
+   SERVICES SECTION - PROFESSIONAL ASTROLOGY THEME
+======================================== */
+
+:root {
+  --services-gold: #ffd700;
+  --services-gold-dark: #f59e0b;
+  --services-purple: #6b21e5;
+  --services-purple-dark: #4c1d95;
+  --services-pink: #ec4899;
+  --services-bg: #000000;
+  --services-card-bg: rgba(26, 11, 46, 0.6);
+  --services-text: #ffffff;
+  --services-text-muted: #c9b3e0;
+  --services-border: rgba(255, 215, 0, 0.15);
+  --services-glow: rgba(255, 215, 0, 0.2);
+}
+
+/* ========================================
+   MAIN SECTION
+======================================== */
+
 .services-section {
-  padding: 2rem 2rem;
-  background-color: #000;
+  position: relative;
+  padding: 5rem 2rem;
+  background: linear-gradient(180deg, #0a0a0a 0%, #1a0b2e 100%);
+  overflow: hidden;
+}
+
+/* Cosmic Background */
+.services-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.services-nebula {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, var(--services-purple), transparent);
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.15;
+  top: 20%;
+  right: -10%;
+  animation: floatNebula 20s ease-in-out infinite;
+}
+
+@keyframes floatNebula {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-30px, 30px) scale(1.1);
+  }
+}
+
+.services-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.services-stars .star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.5);
+  }
+}
+
+/* Wrapper */
+.services-wrapper {
+  position: relative;
+  z-index: 10;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ========================================
+   SERVICE CONTAINER
+======================================== */
+
+.service-container {
+  margin-bottom: 5rem;
+  padding: 2rem;
+  border-radius: 48px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* Section Header */
+.section-header {
   text-align: center;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-/* CONTAINER */
-.services-section .service-container {
-  color: #FFB833;
-  padding: 3rem 2rem;
-  border-radius: 20px;
-  margin-bottom: 3rem;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* TITLE */
-.services-section .service-container-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
   margin-bottom: 3rem;
 }
 
-/* 🔥 RESPONSIVE GRID (KEY FIX) */
-.services-section .services-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2rem;
-  width: 100%;
-}
-
-/* CARD */
-.services-section .service-item {
-  display: flex;
-  flex-direction: column;
+.header-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 1rem;
-  text-decoration: none;
-  background-color: #610161;
-  padding: 2.5rem 1.5rem;
-  border-radius: 16px;
-  width: 100%;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid var(--services-border);
+  border-radius: 50px;
+  margin-bottom: 1rem;
 }
 
-/* ICON */
-.services-section .icon-container {
+.header-badge svg {
+  color: var(--services-gold);
+  width: 14px;
+  height: 14px;
+}
+
+.header-badge span {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--services-gold);
+  letter-spacing: 1px;
+}
+
+.service-container-title {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--services-text);
+}
+
+.title-highlight {
+  background: linear-gradient(135deg, var(--services-gold), var(--services-gold-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.service-subtitle {
+  font-size: 1rem;
+  color: var(--services-text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ========================================
+   SERVICES GRID
+======================================== */
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+/* ========================================
+   SERVICE CARD
+======================================== */
+
+.service-card {
+  position: relative;
+  background: var(--services-card-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--services-border);
+  border-radius: 28px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--services-gold);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Effects */
+.card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 215, 0, 0.08), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.service-card:hover .card-glow {
+  opacity: 1;
+}
+
+.card-shine {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.03) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+  pointer-events: none;
+}
+
+.service-card:hover .card-shine {
+  transform: translateX(100%);
+}
+
+/* Icon Container */
+.icon-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 1.5rem;
 }
 
-.services-section .icon-wrapper {
+.icon-ring {
   position: relative;
   width: 120px;
   height: 120px;
@@ -64,59 +247,313 @@
   align-items: center;
 }
 
-.services-section .icon-wrapper::before {
-  content: "";
+.icon-ring::before {
+  content: '';
   position: absolute;
-  inset: 0;
+  inset: -3px;
   border-radius: 50%;
-  border: 2px dashed rgba(255, 255, 255, 0.7);
+  background: linear-gradient(135deg, var(--services-gold), var(--services-purple));
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.services-section .service-icon {
+.service-card:hover .icon-ring::before {
+  opacity: 1;
+  animation: rotateRing 2s linear infinite;
+}
+
+@keyframes rotateRing {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.icon-wrapper {
+  position: relative;
   width: 100px;
   height: 100px;
-  background: #fff;
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
-  font-size: 50px;
-  color: #ff7a00;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2;
 }
 
-.services-section .service-item:hover  {
-  box-shadow: 0 10px 40px 0px #610161;
+.service-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--services-gold), var(--services-gold-dark));
+  border-radius: 50%;
+  font-size: 2.5rem;
+  color: #1a0a2e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
 }
 
-.services-section .service-title {
-  color: #eee;
-  font-size: 1.5rem;
+.service-card:hover .service-icon {
+  transform: scale(1.1);
+}
+
+/* Complimentary Card */
+.complimentary-card .service-icon {
+  background: linear-gradient(135deg, var(--services-purple), var(--services-purple-dark));
+  color: var(--services-gold);
+}
+
+.complimentary-card .icon-ring::before {
+  background: linear-gradient(135deg, var(--services-purple), var(--services-pink));
+}
+
+/* Card Content */
+.service-title {
+  font-size: 1.3rem;
   font-weight: 700;
-  text-align: center;
+  color: var(--services-text);
+  margin-bottom: 0.75rem;
 }
 
-@media (max-width: 576px) {
+.service-description {
+  font-size: 0.85rem;
+  color: var(--services-text-muted);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+/* Card Footer */
+.service-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 1rem;
+  border-top: 1px solid var(--services-border);
+}
+
+.learn-more {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--services-gold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.arrow-icon {
+  color: var(--services-gold);
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover .arrow-icon {
+  transform: translateX(5px);
+}
+
+/* ========================================
+   PREMIUM CARD SPECIFIC
+======================================== */
+
+.premium-card {
+  background: linear-gradient(145deg, rgba(26, 11, 46, 0.8), rgba(26, 11, 46, 0.6));
+}
+
+.premium-card .service-icon {
+  background: linear-gradient(135deg, var(--services-gold), var(--services-gold-dark));
+}
+
+/* ========================================
+   COMPLIMENTARY CARD SPECIFIC
+======================================== */
+
+.complimentary-card {
+  background: linear-gradient(145deg, rgba(15, 12, 41, 0.8), rgba(15, 12, 41, 0.6));
+}
+
+/* ========================================
+   RESPONSIVE STYLES
+======================================== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .services-section {
+    padding: 4rem 1.5rem;
+  }
+  
+  .services-grid {
+    gap: 1.5rem;
+  }
+  
+  .service-container {
+    padding: 1.5rem;
+  }
+}
+
+/* Mobile Landscape */
+@media (max-width: 768px) {
   .services-section {
     padding: 3rem 1rem;
   }
-
-  .service-container {
-    padding: 2rem 1rem;
+  
+  .services-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
   }
-
+  
+  .service-card {
+    padding: 1.5rem;
+  }
+  
+  .icon-ring {
+    width: 100px;
+    height: 100px;
+  }
+  
   .icon-wrapper {
     width: 80px;
     height: 80px;
   }
-
+  
   .service-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
+    width: 65px;
+    height: 65px;
+    font-size: 2rem;
   }
-
+  
   .service-title {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
+  }
+  
+  .service-container-title {
+    font-size: 1.8rem;
+  }
+}
+
+/* Mobile Portrait */
+@media (max-width: 576px) {
+  .services-section {
+    padding: 2rem 0.75rem;
+  }
+  
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .service-container {
+    margin-bottom: 3rem;
+    padding: 1rem;
+  }
+  
+  .service-card {
+    padding: 1.25rem;
+  }
+  
+  .icon-ring {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .icon-wrapper {
+    width: 65px;
+    height: 65px;
+  }
+  
+  .service-icon {
+    width: 55px;
+    height: 55px;
+    font-size: 1.5rem;
+  }
+  
+  .service-title {
+    font-size: 1rem;
+  }
+  
+  .service-description {
+    font-size: 0.8rem;
+  }
+  
+  .section-header {
+    margin-bottom: 2rem;
+  }
+  
+  .service-container-title {
+    font-size: 1.5rem;
+  }
+  
+  .service-subtitle {
+    font-size: 0.85rem;
+  }
+}
+
+/* Extra Small */
+@media (max-width: 375px) {
+  .service-card {
+    padding: 1rem;
+  }
+  
+  .icon-ring {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .icon-wrapper {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .service-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+  }
+}
+
+/* ========================================
+   ANIMATIONS
+======================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .services-nebula,
+  .services-stars .star,
+  .service-card,
+  .service-icon,
+  .arrow-icon,
+  .card-shine {
+    animation: none;
+    transition: none;
+  }
+  
+  .service-card:hover {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .service-card {
+    border: 2px solid var(--services-gold);
+  }
+  
+  .service-icon {
+    background: var(--services-gold);
+    color: black;
   }
 }

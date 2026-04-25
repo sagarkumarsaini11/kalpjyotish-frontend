@@ -1,119 +1,722 @@
-.modal-backdrop {
+/* ========================================
+   CONTACT FORM - PROFESSIONAL ASTROLOGY THEME
+======================================== */
+
+:root {
+  --contact-primary: #ffd700;
+  --contact-primary-dark: #f59e0b;
+  --contact-secondary: #6b21e5;
+  --contact-secondary-dark: #4c1d95;
+  --contact-bg-dark: #0f0c29;
+  --contact-bg-light: #1a0b2e;
+  --contact-glass: rgba(255, 255, 255, 0.05);
+  --contact-glass-border: rgba(255, 215, 0, 0.15);
+  --contact-success: #22c55e;
+  --contact-error: #ef4444;
+  --contact-text: #ffffff;
+  --contact-text-muted: #c9b3e0;
+}
+
+/* ========================================
+   MODAL BACKDROP
+======================================== */
+
+.contact-modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
+  z-index: 10000;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 20px;
 }
 
-.modal-content {
-  background: #1e1e2f;
-  padding: 2rem;
-  border-radius: 15px;
+/* ========================================
+   MODAL CONTENT
+======================================== */
+
+.contact-modal-content {
+  position: relative;
+  background: linear-gradient(145deg, var(--contact-bg-light), var(--contact-bg-dark));
+  border-radius: 32px;
   width: 100%;
-  max-width: 500px;
-  color: #fff;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--contact-glass-border);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 215, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  scrollbar-width: thin;
+  scrollbar-color: var(--contact-primary) var(--contact-bg-dark);
 }
 
-.modal-header {
+.contact-modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.contact-modal-content::-webkit-scrollbar-track {
+  background: var(--contact-bg-dark);
+  border-radius: 10px;
+}
+
+.contact-modal-content::-webkit-scrollbar-thumb {
+  background: var(--contact-primary);
+  border-radius: 10px;
+}
+
+/* ========================================
+   COSMIC BACKGROUND EFFECTS
+======================================== */
+
+.modal-cosmic-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cosmic-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  animation: pulse-ring 8s ease-out infinite;
+}
+
+.cosmic-ring-1 {
+  width: 300px;
+  height: 300px;
+  top: -150px;
+  left: -150px;
+  animation-delay: 0s;
+}
+
+.cosmic-ring-2 {
+  width: 500px;
+  height: 500px;
+  bottom: -250px;
+  right: -250px;
+  animation-delay: 2s;
+}
+
+.cosmic-ring-3 {
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: 4s;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.3;
+  }
+}
+
+.floating-star {
+  position: absolute;
+  font-size: 14px;
+  color: var(--contact-primary);
+  opacity: 0.3;
+  animation: float-star 6s ease-in-out infinite;
+}
+
+.star-1 { top: 20px; left: 30px; animation-delay: 0s; }
+.star-2 { top: 60px; right: 40px; animation-delay: 1s; font-size: 10px; }
+.star-3 { bottom: 80px; left: 50px; animation-delay: 2s; font-size: 12px; }
+.star-4 { bottom: 120px; right: 60px; animation-delay: 3s; font-size: 8px; }
+
+@keyframes float-star {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-10px) rotate(180deg);
+    opacity: 0.6;
+  }
+}
+
+/* ========================================
+   MODAL HEADER
+======================================== */
+
+.contact-modal-header {
+  position: relative;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  gap: 16px;
+  padding: 28px 28px 20px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), transparent);
+  border-bottom: 1px solid var(--contact-glass-border);
+  z-index: 1;
 }
 
-.modal-header h2 {
-  font-size: 1.6rem;
-  font-weight: bold;
+.header-icon-wrapper {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, var(--contact-primary), var(--contact-primary-dark));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.header-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--contact-bg-dark);
+}
+
+.header-text {
+  flex: 1;
+}
+
+.header-text h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
   margin: 0;
+  background: linear-gradient(135deg, var(--contact-primary), var(--contact-primary-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-text p {
+  font-size: 0.8rem;
+  color: var(--contact-text-muted);
+  margin: 4px 0 0;
 }
 
 .close-button {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 2rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--contact-glass);
+  border: 1px solid var(--contact-glass-border);
+  color: var(--contact-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.modal-body form {
+.close-button:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: var(--contact-error);
+  transform: rotate(90deg);
+}
+
+.close-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ========================================
+   MODAL BODY
+======================================== */
+
+.contact-modal-body {
+  position: relative;
+  padding: 28px;
+  z-index: 1;
+}
+
+.contact-modal-body form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 20px;
 }
 
-.modal-body input,
-.modal-body textarea {
+/* ========================================
+   INPUT GROUPS
+======================================== */
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px;
+  z-index: 2;
+  color: var(--contact-text-muted);
+  transition: all 0.3s ease;
+}
+
+.input-group.focused .input-icon {
+  color: var(--contact-primary);
+  transform: scale(1.1);
+}
+
+.input-group input,
+.input-group textarea {
   width: 100%;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid #ffb833;
-  border-radius: 8px;
-  padding: 1rem; /* ✅ Bigger padding */
-  color: #fff;
-  font-size: 1.05rem; /* ✅ Bigger font */
-  box-sizing: border-box;
+  background: var(--contact-glass);
+  border: 1px solid var(--contact-glass-border);
+  border-radius: 16px;
+  padding: 16px 16px 16px 48px;
+  color: var(--contact-text);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
 }
 
-.modal-body input::placeholder,
-.modal-body textarea::placeholder {
-  color: #bbb;
-  font-size: 1rem;
-}
-
-.modal-body textarea {
-  min-height: 120px;
+.input-group textarea {
   resize: vertical;
+  min-height: 100px;
+  padding-top: 20px;
 }
 
-.modal-footer {
-  margin-top: 1.5rem;
+.input-group input:focus,
+.input-group textarea:focus {
+  outline: none;
+  border-color: var(--contact-primary);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
 }
 
-.connect-button {
-  background-color: #ffb833;
-  color: #E05320;
-  border: none;
-  padding: 1rem;
-  font-size: 1.1rem;
-  font-weight: bold;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.input-group .floating-label {
+  position: absolute;
+  left: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--contact-text-muted);
+  font-size: 0.95rem;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  background: transparent;
+  padding: 0 4px;
+}
+
+.textarea-group .floating-label {
+  top: 20px;
+  transform: none;
+}
+
+.input-group input:focus ~ .floating-label,
+.input-group input:not(:placeholder-shown) ~ .floating-label,
+.input-group textarea:focus ~ .floating-label,
+.input-group textarea:not(:placeholder-shown) ~ .floating-label {
+  top: -10px;
+  left: 42px;
+  font-size: 0.7rem;
+  color: var(--contact-primary);
+  background: var(--contact-bg-light);
+  padding: 0 6px;
+}
+
+.input-border {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--contact-primary), var(--contact-primary-dark));
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.input-group.focused .input-border {
+  width: calc(100% - 32px);
+  left: 16px;
+}
+
+/* ========================================
+   SELECT GROUP
+======================================== */
+
+.select-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cosmic-select {
   width: 100%;
+  background: var(--contact-glass);
+  border: 1px solid var(--contact-glass-border);
+  border-radius: 16px;
+  padding: 16px 16px 16px 48px;
+  color: var(--contact-text);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  font-family: inherit;
 }
 
-.connect-button:hover {
-  background-color: #e6a323;
+.cosmic-select:focus {
+  outline: none;
+  border-color: var(--contact-primary);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
 }
 
-/* 🔹 Mobile Responsive */
+.cosmic-select option {
+  background: var(--contact-bg-light);
+  color: var(--contact-text);
+}
+
+.select-label {
+  position: absolute;
+  left: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--contact-text-muted);
+  font-size: 0.95rem;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.cosmic-select:focus ~ .select-label,
+.cosmic-select:valid ~ .select-label {
+  top: -10px;
+  left: 42px;
+  font-size: 0.7rem;
+  color: var(--contact-primary);
+  background: var(--contact-bg-light);
+  padding: 0 6px;
+}
+
+.select-border {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--contact-primary), var(--contact-primary-dark));
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.cosmic-select:focus ~ .select-border {
+  width: calc(100% - 32px);
+  left: 16px;
+}
+
+/* ========================================
+   RESPONSE MESSAGE
+======================================== */
+
+.response-message {
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  text-align: center;
+  animation: slideDown 0.3s ease;
+}
+
+.response-message.success {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid var(--contact-success);
+  color: #4ade80;
+}
+
+.response-message.error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--contact-error);
+  color: #f87171;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   SUBMIT BUTTON
+======================================== */
+
+.submit-button {
+  position: relative;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--contact-primary), var(--contact-primary-dark));
+  border: none;
+  border-radius: 16px;
+  color: var(--contact-bg-dark);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-top: 12px;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.button-icon {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+}
+
+.submit-button:hover:not(:disabled) .button-icon {
+  transform: translateX(4px);
+}
+
+.button-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.submit-button:hover:not(:disabled) .button-glow {
+  width: 300px;
+  height: 300px;
+}
+
+/* Button Loader */
+.button-loader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.loader-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--contact-bg-dark);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   FOOTER NOTE
+======================================== */
+
+.modal-footer-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--contact-glass-border);
+  font-size: 0.7rem;
+  color: var(--contact-text-muted);
+}
+
+.modal-footer-note svg {
+  width: 14px;
+  height: 14px;
+  color: var(--contact-primary);
+  opacity: 0.7;
+}
+
+/* ========================================
+   RESPONSIVE STYLES
+======================================== */
+
+/* Tablet */
 @media (max-width: 768px) {
-  .modal-content {
-    padding: 1.5rem;
-    border-radius: 10px;
-    max-width: 95%;
+  .contact-modal-content {
+    max-width: 500px;
+    border-radius: 28px;
   }
 
-  .modal-header h2 {
-    font-size: 1.4rem;
+  .contact-modal-header {
+    padding: 24px 24px 16px;
   }
 
-  .modal-body input,
-  .modal-body textarea {
-    font-size: 1rem;
-    padding: 0.9rem;
+  .contact-modal-body {
+    padding: 24px;
   }
 
-  .connect-button {
-    font-size: 1rem;
-    padding: 0.9rem;
+  .header-text h2 {
+    font-size: 1.3rem;
+  }
+
+  .header-icon-wrapper {
+    width: 44px;
+    height: 44px;
+  }
+
+  .header-icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Mobile Landscape */
+@media (max-width: 576px) {
+  .contact-modal-backdrop {
+    padding: 16px;
+  }
+
+  .contact-modal-content {
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: 24px;
+  }
+
+  .contact-modal-header {
+    padding: 20px 20px 12px;
+    gap: 12px;
+  }
+
+  .contact-modal-body {
+    padding: 20px;
+  }
+
+  .header-text h2 {
+    font-size: 1.2rem;
+  }
+
+  .header-text p {
+    font-size: 0.7rem;
+  }
+
+  .header-icon-wrapper {
+    width: 40px;
+    height: 40px;
+  }
+
+  .header-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .close-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .input-group input,
+  .input-group textarea,
+  .cosmic-select {
+    padding: 14px 14px 14px 44px;
+    font-size: 0.9rem;
+  }
+
+  .input-icon {
+    left: 14px;
+  }
+
+  .input-group .floating-label,
+  .select-label {
+    left: 44px;
+    font-size: 0.88rem;
+  }
+
+  .submit-button {
+    padding: 14px;
+    font-size: 0.9rem;
+  }
+
+  .modal-footer-note {
+    font-size: 0.65rem;
+  }
+
+  .cosmic-ring-1,
+  .cosmic-ring-2 {
+    display: none;
+  }
+}
+
+/* Extra Small */
+@media (max-width: 375px) {
+  .contact-modal-header {
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .header-text {
+    text-align: center;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+
+  .header-icon-wrapper {
+    width: 48px;
+    height: 48px;
+  }
+
+  .input-group input,
+  .input-group textarea,
+  .cosmic-select {
+    padding: 12px 12px 12px 40px;
+  }
+
+  .input-icon {
+    left: 12px;
+  }
+
+  .input-group .floating-label,
+  .select-label {
+    left: 40px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-ring,
+  .floating-star,
+  .submit-button,
+  .close-button,
+  .input-group input,
+  .input-group textarea {
+    animation: none;
+    transition: none;
   }
 }

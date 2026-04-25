@@ -1,150 +1,614 @@
-/* ==================================
-   Auth Modal - Consolidated Styles
-   ================================== */
+/* Add to SignupModal.css - Enhanced Styles */
 
-/* --- Base Modal & Layout --- */
-.modal-backdrop {
+/* ========================================
+   ENHANCED MODAL STYLES
+======================================== */
+
+.signup-modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2000;
-  padding: 2rem;
-  box-sizing: border-box;
+  padding: 20px;
 }
-.modal-content {
-  background: radial-gradient(circle, rgba(40, 42, 60, 0.98) 0%, rgba(25, 25, 45, 0.98) 100%);
-  border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  width: 100%;
-  max-width: 450px;
-  max-height: 90vh; /* Prevents collision with header/footer */
-  color: #eee;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+.signup-modal-content {
   position: relative;
+  background: linear-gradient(145deg, #1a0b2e, #0f0c29);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  color: #fff;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
+
+/* Cosmic Background Effect */
+.modal-cosmic-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.modal-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #ffd700;
+  border-radius: 50%;
+  opacity: 0;
+  animation: modalStarTwinkle 3s ease-in-out infinite;
+}
+
+.modal-star:nth-child(1) { top: 10%; left: 15%; animation-delay: 0s; }
+.modal-star:nth-child(2) { top: 25%; left: 85%; animation-delay: 1s; width: 1px; }
+.modal-star:nth-child(3) { top: 70%; left: 10%; animation-delay: 2s; width: 3px; }
+.modal-star:nth-child(4) { top: 85%; left: 75%; animation-delay: 0.5s; }
+
+@keyframes modalStarTwinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.5);
+  }
+}
+
+/* Close Button */
 .modal-close-btn {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  background: none;
-  border: none;
-  color: #aaa;
-  font-size: 2rem;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  color: #ffd700;
+  font-size: 1.2rem;
   cursor: pointer;
-  transition: color 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
   z-index: 10;
 }
-.modal-close-btn:hover { color: #ffcc00; transform: rotate(90deg); }
 
-/* --- Scrollable Body & Typography --- */
-.modal-body {
-  padding: 2.5rem 3rem;
+.modal-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  transform: rotate(90deg);
+}
+
+/* Modal Body */
+.signup-modal-body {
+  position: relative;
+  z-index: 10;
+  padding: 2rem 2rem 1.5rem;
   overflow-y: auto;
+  flex: 1;
 }
-/* === NEW: Themed Scrollbar === */
-.modal-body::-webkit-scrollbar {
-  width: 8px;
+
+/* Custom Scrollbar */
+.signup-modal-body::-webkit-scrollbar {
+  width: 6px;
 }
-.modal-body::-webkit-scrollbar-track {
+
+.signup-modal-body::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
 }
-.modal-body::-webkit-scrollbar-thumb {
-  background-color: #ffcc00;
+
+.signup-modal-body::-webkit-scrollbar-thumb {
+  background: #ffd700;
   border-radius: 10px;
-  border: 2px solid transparent;
-  background-clip: content-box;
-}
-.modal-body::-webkit-scrollbar-thumb:hover {
-  background-color: #ffe066;
 }
 
-.modal-body h2 { color: #ffcc00; text-align: center; margin-top: 0; margin-bottom: 2rem; font-size: 1.8rem; }
-.modal-body p { text-align: center; margin-bottom: 2rem; color: #ccc; font-size: 0.95rem; line-height: 1.5; }
+/* Progress Indicator */
+.modal-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
 
-/* --- Form Elements & Input Styling --- */
-.details-form {
+.progress-step {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  align-items: center;
+  gap: 0.25rem;
 }
-.form-group { position: relative; }
-.input-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #888; font-size: 1.2rem; pointer-events: none; transition: color 0.3s ease; }
-.modal-content input { width: 100%; padding: 14px 14px 14px 50px; background-color: rgba(0, 0, 0, 0.3); border: 1px solid #444; border-radius: 8px; color: #eee; font-size: 1rem; transition: all 0.3s ease; box-sizing: border-box; }
-.modal-content input::placeholder { color: #888; }
-.modal-content input:focus { outline: none; border-color: #ffcc00; box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.15); }
-.modal-content input:not(:placeholder-shown), .modal-content input:-webkit-autofill { background-color: #e1e4e8 !important; color: #24292e !important; -webkit-box-shadow: 0 0 0 30px #e1e4e8 inset !important; -webkit-text-fill-color: #24292e !important; }
-.form-group:has(input:not(:placeholder-shown)) .input-icon { color: #24292e; }
 
-/* --- Custom Select & Time Picker Dropdowns --- */
-.custom-select-container { position: relative; width: 100%; }
-.custom-select-trigger { display: flex; align-items: center; width: 100%; padding: 14px 14px 14px 50px; background-color: rgba(0, 0, 0, 0.3); border: 1px solid #444; border-radius: 8px; color: #888; font-size: 1rem; transition: all 0.3s ease; box-sizing: border-box; text-align: left; cursor: pointer; position: relative; }
-.custom-select-trigger.has-value { background-color: #e1e4e8; color: #24292e; }
-.custom-select-trigger.has-value .input-icon, .custom-select-trigger.has-value .expand-icon { color: #24292e; }
-.custom-select-trigger.has-value span { color: #24292e; }
-.custom-select-trigger:focus-within { outline: none; border-color: #ffcc00; box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.15); }
-.custom-select-trigger span { flex-grow: 1; }
-.expand-icon { color: #888; font-size: 1.5rem; transition: transform 0.3s ease; }
-.custom-select-options, .custom-time-picker-options { position: absolute; top: calc(100% + 8px); left: 0; width: 100%; background-color: #282a3c; border: 1px solid #44475a; border-radius: 8px; z-index: 11; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); overflow: hidden; }
-.custom-select-options { list-style: none; padding: 0.5rem 0; margin: 0; max-height: 200px; overflow-y: auto; }
-.option-item { padding: 0.75rem 1.25rem; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; color: #f8f8f2; }
-.option-item:hover { background-color: #44475a; }
-.option-item.selected { background-color: #ffcc00; color: #282a3c; font-weight: bold; }
-.custom-time-picker-options { display: flex; flex-direction: column; }
-.custom-time-picker-header { padding: 0.75rem; background-color: #1d1f2b; color: white; font-weight: 500; text-align: center; flex-shrink: 0; }
-.custom-time-picker-list { list-style: none; padding: 0; margin: 0; max-height: 220px; overflow-y: auto; }
-.custom-time-picker-list::-webkit-scrollbar { width: 8px; }
-.custom-time-picker-list::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
-.custom-time-picker-list::-webkit-scrollbar-thumb { background-color: #ffcc00; border-radius: 10px; }
+.progress-step span {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #c9b3e0;
+  transition: all 0.3s ease;
+}
 
-/* --- React-DatePicker Library Overrides --- */
-.react-datepicker-popper { z-index: 12 !important; }
-.react-datepicker { font-family: inherit; background-color: #282a3c; border: 1px solid #44475a; border-radius: 8px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
-.react-datepicker-popper[data-placement^="bottom"] .react-datepicker__triangle::before, .react-datepicker-popper[data-placement^="bottom"] .react-datepicker__triangle::after { border-bottom-color: #282a3c; }
-.react-datepicker__header { background-color: #1d1f2b; border-bottom: 1px solid #44475a; padding-top: 10px; }
-.react-datepicker__current-month, .react-datepicker-year-header { color: #f8f8f2; font-weight: 500; font-size: 1rem; }
-.react-datepicker__navigation-icon::before { border-color: #f8f8f2; }
-.react-datepicker__day-name, .react-datepicker__day { color: #f8f8f2; width: 2rem; line-height: 2rem; transition: background-color 0.2s ease, color 0.2s ease; }
-.react-datepicker__day-name { color: #bd93f9; }
-.react-datepicker__day:hover { background-color: #44475a; color: #ffcc00; border-radius: 50%; }
-.react-datepicker__day--selected, .react-datepicker__day--keyboard-selected { background-color: #ffcc00; color: #282a3c; font-weight: bold; border-radius: 50%; }
-.react-datepicker__day--disabled { color: #6272a4; cursor: not-allowed; }
-.react-datepicker__year-read-view--down-arrow, .react-datepicker__month-read-view--down-arrow { border-color: #f8f8f2; }
-.react-datepicker__year-dropdown, .react-datepicker__month-dropdown { background-color: #282a3c; border: 1px solid #44475a; }
-.react-datepicker__year-option:hover, .react-datepicker__month-option:hover { background-color: #44475a; }
-.custom-datepicker-input.has-value { background-color: #e1e4e8; color: #24292e; }
-.custom-datepicker-input.has-value .input-icon { color: #24292e; }
-.custom-datepicker-input.has-value input { background-color: transparent !important; color: #24292e !important; -webkit-text-fill-color: #24292e !important; }
-.custom-datepicker-input { padding: 0 !important; }
-.custom-datepicker-input input { height: 100%; }
+.progress-step.active span {
+  background: linear-gradient(135deg, #ffd700, #f59e0b);
+  color: #1a0a2e;
+  border-color: transparent;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
 
-/* --- Utility & Other Styles --- */
-.file-group { margin-top: 0.5rem; }
-.upload-box-label { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 12px; background-color: transparent; border: 1px dashed #666; border-radius: 8px; text-align: center; color: #888; margin-bottom: 0.75rem; }
-.file-input-wrapper { display: flex; align-items: center; width: 100%; background-color: #e1e4e8; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; }
-.file-input-wrapper input[type="file"] { display: none; }
-.file-choose-btn { background-color: #f6f8fa; border: none; border-right: 1px solid #ccc; padding: 12px 20px; cursor: pointer; color: #24292e; white-space: nowrap; font-weight: 500; transition: background-color 0.2s ease; }
-.file-choose-btn:hover { background-color: #f3f4f6; }
-.file-name-display { padding-left: 15px; color: #586069; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.profile-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 1rem auto -0.5rem; display: block; border: 2px solid #ffcc00; }
-.auth-toggle { margin-top: 1.5rem; text-align: center; }
-.auth-toggle span { color: #ffcc00; font-weight: bold; cursor: pointer; text-decoration: underline; }
-.error-msg { text-align: center; font-size: 0.9rem; color: #ff5e5e; }
-.back-link { color: #ffcc00; cursor: pointer; display: block; text-align: center; }
-.modal-btn { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 14px; background: #ffcc00; color: #1a1a2e; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
-.modal-btn svg { font-size: 1.4rem; transition: transform 0.3s ease; }
-.modal-btn:hover:not(:disabled) { background: #ffe066; box-shadow: 0 4px 15px rgba(255, 204, 0, 0.2); }
-.modal-btn:hover:not(:disabled) svg { transform: translateX(5px); }
-.modal-btn:disabled { background-color: #555; color: #999; cursor: not-allowed; box-shadow: none; }
-.success-message h2 { font-size: 2.5rem; }
-.success-message p { font-size: 1.1rem; }
+.progress-step label {
+  font-size: 0.7rem;
+  color: #c9b3e0;
+}
+
+.progress-step.active label {
+  color: #ffd700;
+}
+
+.progress-line {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 0.5rem;
+  border-radius: 2px;
+}
+
+.progress-line.active {
+  background: linear-gradient(90deg, #ffd700, #f59e0b);
+}
+
+/* Step Icon */
+.step-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1rem;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.step-icon svg {
+  font-size: 1.8rem;
+  color: #ffd700;
+}
+
+/* Typography */
+.signup-modal-body h2 {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #fff, #ffd700);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.signup-modal-body p {
+  text-align: center;
+  color: #c9b3e0;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Form Groups */
+.form-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #c9b3e0;
+  font-size: 1.1rem;
+  z-index: 2;
+  transition: color 0.3s ease;
+}
+
+.form-group input:focus ~ .input-icon,
+.form-group input:not(:placeholder-shown) ~ .input-icon {
+  color: #ffd700;
+}
+
+.signup-modal-content input {
+  width: 100%;
+  padding: 14px 16px 14px 48px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--chat-border, rgba(255, 215, 0, 0.15));
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.signup-modal-content input:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+}
+
+.disabled-input {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* OTP Input Styling */
+.otp-group {
+  position: relative;
+}
+
+.otp-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.otp-digit {
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffd700;
+  transition: all 0.3s ease;
+}
+
+.otp-digit.filled {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: #ffd700;
+}
+
+/* File Upload */
+.file-group {
+  margin-top: 0.5rem;
+}
+
+.upload-box-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 215, 0, 0.3);
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: #c9b3e0;
+  margin-bottom: 0.75rem;
+}
+
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.file-choose-btn {
+  padding: 10px 16px;
+  background: rgba(255, 215, 0, 0.1);
+  color: #ffd700;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.file-choose-btn:hover {
+  background: rgba(255, 215, 0, 0.2);
+}
+
+.file-name-display {
+  padding: 0 12px;
+  color: #c9b3e0;
+  font-size: 0.8rem;
+}
+
+.profile-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 1rem auto 0;
+  display: block;
+  border: 2px solid #ffd700;
+}
+
+/* Custom Select */
+.custom-select-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px 14px 48px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  border-radius: 12px;
+  color: #c9b3e0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.custom-select-trigger.has-value {
+  color: #fff;
+}
+
+.custom-select-options {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background: #2a1644;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.option-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.option-item:hover {
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.option-item.selected {
+  background: rgba(255, 215, 0, 0.15);
+  color: #ffd700;
+}
+
+.check-icon {
+  color: #ffd700;
+}
+
+/* Custom Time Picker */
+.custom-time-picker-options {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background: #2a1644;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.custom-time-picker-header {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ffd700;
+}
+
+.custom-time-picker-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Custom DatePicker */
+.custom-datepicker-input {
+  cursor: pointer;
+}
+
+.custom-datepicker-input input {
+  cursor: pointer;
+}
+
+/* Auth Toggle */
+.auth-toggle {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.auth-toggle span {
+  color: #ffd700;
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 5px;
+  transition: all 0.3s ease;
+}
+
+.auth-toggle span:hover {
+  text-decoration: underline;
+}
+
+/* Back Link */
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  color: #c9b3e0;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: #ffd700;
+}
+
+/* Error Message */
+.error-msg {
+  color: #f87171;
+  text-align: center;
+  font-size: 0.8rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+}
+
+/* Modal Button */
+.modal-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ffd700, #f59e0b);
+  border: none;
+  border-radius: 40px;
+  color: #1a0a2e;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.modal-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+}
+
+.modal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Success Animation */
+.success-message {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.success-animation {
+  margin-bottom: 1.5rem;
+}
+
+.success-circle {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-circle svg {
+  font-size: 2.5rem;
+  color: white;
+}
+
+.success-note {
+  font-size: 0.8rem;
+  color: #c9b3e0;
+  margin-top: 0.5rem;
+}
+
+/* Modal Footer Note */
+.modal-footer-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 215, 0, 0.1);
+  font-size: 0.7rem;
+  color: #c9b3e0;
+}
+
+.modal-footer-note svg {
+  color: #ffd700;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .signup-modal-content {
+    max-width: 95%;
+    border-radius: 24px;
+  }
+  
+  .signup-modal-body {
+    padding: 1.5rem;
+  }
+  
+  .modal-progress {
+    margin-bottom: 1.5rem;
+  }
+  
+  .progress-step span {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+  
+  .signup-modal-body h2 {
+    font-size: 1.3rem;
+  }
+  
+  .signup-modal-body p {
+    font-size: 0.75rem;
+  }
+  
+  .otp-digit {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-star,
+  .modal-btn,
+  .modal-close-btn {
+    animation: none;
+    transition: none;
+  }
+}

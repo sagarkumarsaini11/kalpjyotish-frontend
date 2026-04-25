@@ -1,26 +1,17 @@
+// src/components/Navbar.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Icons
-import { GiSun } from "react-icons/gi";
-import { FaHome, FaShoppingCart } from "react-icons/fa";
+import { GiSun, GiMoon } from "react-icons/gi";
+import { FaHome, FaShoppingCart, FaUserCircle, FaUserAstronaut } from "react-icons/fa";
 import { BsStars, BsChatDots } from "react-icons/bs";
-import { IoClose } from "react-icons/io5";
-import { FaUserCircle } from "react-icons/fa";
+import { IoClose, IoLogOutOutline, IoPersonOutline } from "react-icons/io5";
+import { FiHeart, FiStar } from "react-icons/fi";
 import AuthModal from "./AuthModal";
 import "./Navbar.css";
 import logo from '../assets/logo.jpeg';
-
-const Path = (props) => (
-  <motion.path
-    fill="transparent"
-    strokeWidth="3"
-    stroke="hsl(0, 0%, 100%)"
-    strokeLinecap="round"
-    {...props}
-  />
-);
 
 const Navbar = ({ onSignupClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,8 +19,18 @@ const Navbar = ({ onSignupClick }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const userMenuRef = useRef(null);
   const navigate = useNavigate();
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const toggleMobileMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMobileMenu = () => setIsMenuOpen(false);
@@ -39,28 +40,34 @@ const Navbar = ({ onSignupClick }) => {
   // Check login status on component mount
   useEffect(() => {
     const checkLoginStatus = () => {
-      const storedUser = localStorage.getItem('user');
-      const storedLoginStatus = localStorage.getItem('isLoggedIn');
+      try {
+        const storedUser = localStorage.getItem('user');
+        const storedLoginStatus = localStorage.getItem('isLoggedIn');
 
-      if (storedUser && storedLoginStatus === 'true') {
-        setUser(JSON.parse(storedUser));
-        setIsLoggedIn(true);
-      } else {
+        if (storedUser && storedLoginStatus === 'true') {
+          setUser(JSON.parse(storedUser));
+          setIsLoggedIn(true);
+        } else {
+          setUser(null);
+          setIsLoggedIn(false);
+        }
+      } catch (error) {
+        console.error("Error checking login status:", error);
         setUser(null);
         setIsLoggedIn(false);
       }
     };
 
     checkLoginStatus();
-
-    // Listen for storage changes
     const interval = setInterval(checkLoginStatus, 500);
-
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "auto";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
   }, [isMenuOpen]);
 
   useEffect(() => {
@@ -73,19 +80,22 @@ const Navbar = ({ onSignupClick }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle login/profile button click
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('authRole');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('backendUserId');
-    setUser(null);
-    setIsLoggedIn(false);
-    setShowUserMenu(false);
-    navigate('/');
+    try {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('authRole');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('backendUserId');
+      setUser(null);
+      setIsLoggedIn(false);
+      setShowUserMenu(false);
+      navigate('/');
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   const handleProfileNavigate = () => {
@@ -109,145 +119,180 @@ const Navbar = ({ onSignupClick }) => {
   const navItems = [
     { to: "/", icon: <FaHome />, text: "Home" },
     { to: "/horoscope", icon: <BsStars />, text: "Horoscope" },
-    { to: "/pooja", icon: <BsStars />, text: "Pooja" },
-    { to: "/astro-connect", icon: <BsChatDots />, text: "Connect with Astrologer" },
-    { to: "/contact-us", icon: <BsChatDots />, text: "Contact Now" },
+    { to: "/pooja", icon: <FiStar />, text: "Pooja" },
+    { to: "/astro-connect", icon: <BsChatDots />, text: "Connect" },
+    { to: "/contact-us", icon: <FiHeart />, text: "Contact" },
     { to: "/shop", icon: <FaShoppingCart />, text: "Shop" },
   ];
 
   const sideMenuVariants = {
     closed: { x: "100%" },
-    open: { x: "0%", transition: { type: "spring", stiffness: 120 } },
-  };
-
-  const listItemVariants = {
-    closed: { opacity: 0 },
-    open: { opacity: 1 },
+    open: { x: "0%", transition: { type: "spring", stiffness: 120, damping: 20 } },
   };
 
   return (
     <>
       <motion.nav
-        className="navbar"
+        className={`navbar ${scrolled ? 'scrolled' : ''}`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
       >
         {/* Logo */}
         <div className="navbar-logo">
           <NavLink to="/" onClick={isMenuOpen ? closeMobileMenu : undefined}>
-            <img src={logo} alt="logo" />
+            <div className="logo-wrapper">
+              <img src={logo} alt="KalpJyotish" onError={(e) => {
+                e.target.src = "https://via.placeholder.com/45?text=KJ";
+              }} />
+              <div className="logo-glow"></div>
+            </div>
+            <div className="logo-text">
+              <span className="logo-kalp">Kalp</span>
+              <span className="logo-jyotish">Jyotish</span>
+            </div>
           </NavLink>
         </div>
 
         {/* Desktop Navigation */}
         <ul className="navbar-links desktop-links">
           {navItems.map((item) => (
-            <li key={item.to}>
+            <motion.li 
+              key={item.to}
+              whileHover={{ y: -2 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
               <NavLink to={item.to}>
-                <span>{item.text}</span>
+                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-text">{item.text}</span>
+                <span className="nav-hover-line"></span>
               </NavLink>
-            </li>
+            </motion.li>
           ))}
 
-          {/* ✅ Show only in Desktop */}
-          <li className="promo-desktop">
+          {/* User Menu - Desktop */}
+          <li className="user-menu-container">
             {isLoggedIn ? (
               <div className="user-menu" ref={userMenuRef}>
-                <button
-                  className="promo-button"
+                <motion.button
+                  className="user-menu-trigger"
                   onClick={handleAuthClick}
-                  title="Account"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  {user?.name || "Account"}
-                </button>
+                  {user?.profilePhoto ? (
+                    <img src={user.profilePhoto} alt={user.name} className="user-avatar" />
+                  ) : (
+                    <div className="user-avatar-placeholder">
+                      <FaUserAstronaut />
+                    </div>
+                  )}
+                  <span className="user-name">{user?.name?.split(' ')[0] || "User"}</span>
+                  <span className="dropdown-arrow">▼</span>
+                </motion.button>
+                
                 <AnimatePresence>
                   {showUserMenu && (
-                    <motion.ul
+                    <motion.div
                       className="user-dropdown"
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
                     >
-                      <li>
-                        <button className="dropdown-btn" onClick={handleProfileNavigate}>Profile</button>
-                      </li>
-                      <li>
-                        <button className="dropdown-btn" onClick={handleLogout}>Logout</button>
-                      </li>
-                    </motion.ul>
+                      <div className="dropdown-header">
+                        <div className="dropdown-user-info">
+                          {user?.profilePhoto ? (
+                            <img src={user.profilePhoto} alt={user.name} />
+                          ) : (
+                            <FaUserAstronaut />
+                          )}
+                          <div>
+                            <strong>{user?.name || "User"}</strong>
+                            <span>{user?.email || "user@example.com"}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="dropdown-divider"></div>
+                      <button className="dropdown-item" onClick={handleProfileNavigate}>
+                        <IoPersonOutline />
+                        <span>My Profile</span>
+                      </button>
+                      <button className="dropdown-item logout" onClick={handleLogout}>
+                        <IoLogOutOutline />
+                        <span>Logout</span>
+                      </button>
+                    </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             ) : (
-              <button
-                className="promo-button"
+              <motion.button
+                className="login-btn"
                 onClick={handleAuthClick}
-                title="Login"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Login
-              </button>
+                <FaUserCircle />
+                <span>Login</span>
+              </motion.button>
             )}
           </li>
         </ul>
 
-        {/* ✅ Mobile: show promo icon before hamburger */}
+        {/* Mobile Icons */}
         <div className="mobile-icons">
-          <div className="user-menu" ref={userMenuRef}>
-            <button
-              className="promo-button promo-mobile"
-              onClick={handleAuthClick}
-              title={isLoggedIn ? "Account" : "Login"}
-            >
-              <FaUserCircle size={26} />
+          {isLoggedIn ? (
+            <div className="user-menu mobile" ref={userMenuRef}>
+              <button
+                className="mobile-user-btn"
+                onClick={handleAuthClick}
+              >
+                {user?.profilePhoto ? (
+                  <img src={user.profilePhoto} alt={user.name} className="mobile-avatar" />
+                ) : (
+                  <FaUserAstronaut size={24} />
+                )}
+              </button>
+              <AnimatePresence>
+                {showUserMenu && (
+                  <motion.div
+                    className="user-dropdown mobile-dropdown"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                    <button className="dropdown-item" onClick={handleProfileNavigate}>
+                      <IoPersonOutline />
+                      <span>Profile</span>
+                    </button>
+                    <button className="dropdown-item logout" onClick={handleLogout}>
+                      <IoLogOutOutline />
+                      <span>Logout</span>
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <button className="mobile-login-btn" onClick={handleAuthClick}>
+              <FaUserCircle size={24} />
             </button>
-            <AnimatePresence>
-              {isLoggedIn && showUserMenu && (
-                <motion.ul
-                  className="user-dropdown"
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                >
-                  <li>
-                    <button className="dropdown-btn" onClick={handleProfileNavigate}>Profile</button>
-                  </li>
-                  <li>
-                    <button className="dropdown-btn" onClick={handleLogout}>Logout</button>
-                  </li>
-                </motion.ul>
-              )}
-            </AnimatePresence>
-          </div>
+          )}
 
-          <button className="hamburger-button" onClick={toggleMobileMenu}>
-            <svg width="23" height="23" viewBox="0 0 23 23">
-              <Path
-                variants={{
-                  closed: { d: "M 2 2.5 L 20 2.5" },
-                  open: { d: "M 3 16.5 L 17 2.5" },
-                }}
-                animate={isMenuOpen ? "open" : "closed"}
-              />
-              <Path
-                d="M 2 9.423 L 20 9.423"
-                variants={{ closed: { opacity: 1 }, open: { opacity: 0 } }}
-                transition={{ duration: 0.1 }}
-                animate={isMenuOpen ? "open" : "closed"}
-              />
-              <Path
-                variants={{
-                  closed: { d: "M 2 16.346 L 20 16.346" },
-                  open: { d: "M 3 2.5 L 17 16.346" },
-                }}
-                animate={isMenuOpen ? "open" : "closed"}
-              />
-            </svg>
-          </button>
+          <motion.button 
+            className={`hamburger-button ${isMenuOpen ? 'active' : ''}`}
+            onClick={toggleMobileMenu}
+            whileTap={{ scale: 0.9 }}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </motion.button>
         </div>
       </motion.nav>
 
-      {/* --- MOBILE MENU --- */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <>
@@ -266,37 +311,49 @@ const Navbar = ({ onSignupClick }) => {
               exit="closed"
             >
               <div className="mobile-menu-header">
-                <h3>Menu</h3>
-                <button onClick={closeMobileMenu}>
+                <div className="mobile-logo">
+                  <GiSun />
+                  <span>KalpJyotish</span>
+                </div>
+                <motion.button 
+                  onClick={closeMobileMenu}
+                  whileTap={{ scale: 0.9 }}
+                  className="close-menu-btn"
+                >
                   <IoClose size={28} />
-                </button>
+                </motion.button>
               </div>
-              <ul>
-                {navItems.map((item) => (
-                  <motion.li key={item.to} variants={listItemVariants}>
-                    <NavLink to={item.to} onClick={closeMobileMenu}>
-                      {item.icon}
-                      <span>{item.text}</span>
-                    </NavLink>
-                  </motion.li>
-                ))}
-                <motion.li variants={listItemVariants}>
-                  {/* <button
-                    onClick={() => {
-                      closeMobileMenu();
-                      openPromoModal();
-                    }}
-                  > */}
-                  {/* <IoChatbubblesOutline /> */}
-                  {/* <span>Promotions</span> */}
-                  {/* </button> */}
-                </motion.li>
-              </ul>
+
+              <div className="mobile-menu-content">
+                <ul className="mobile-nav-items">
+                  {navItems.map((item, index) => (
+                    <motion.li
+                      key={item.to}
+                      initial={{ opacity: 0, x: 50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                    >
+                      <NavLink to={item.to} onClick={closeMobileMenu}>
+                        <span className="mobile-nav-icon">{item.icon}</span>
+                        <span className="mobile-nav-text">{item.text}</span>
+                      </NavLink>
+                    </motion.li>
+                  ))}
+                </ul>
+
+                <div className="mobile-menu-footer">
+                  <div className="footer-cosmic-text">
+                    <GiMoon />
+                    <span>वसुधैव कुटुम्बकम्</span>
+                  </div>
+                </div>
+              </div>
             </motion.aside>
           </>
         )}
       </AnimatePresence>
 
+      {/* Auth Modal */}
       <AnimatePresence>
         {showAuthModal && (
           <AuthModal
@@ -311,5 +368,3 @@ const Navbar = ({ onSignupClick }) => {
 };
 
 export default Navbar;
-
-

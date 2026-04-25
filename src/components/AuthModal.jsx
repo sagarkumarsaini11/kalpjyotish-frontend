@@ -439,21 +439,22 @@
 
 // ===========================================
 
+// src/components/AuthModal.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { IoClose } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
+import { MdPhone, MdLock, MdPerson, MdVerified, MdArrowForward, MdStar } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import authImage from "../assets/authImage.jpg";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import "./AuthModal.css";
 
-// 🔥 Firebase imports
+// Firebase imports
 import { RecaptchaVerifier, signInWithPhoneNumber, getIdToken } from "firebase/auth";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://backend.kalpjyotish.com";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://backend.kalpjyotish.com";
 
 export default function AuthModal({ onClose, isLoggedIn, user }) {
   const [step, setStep] = useState("mobile");
@@ -467,7 +468,7 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
   const recaptchaRef = useRef(null);
   const navigate = useNavigate();
 
-  /* ---------------- REDIRECT IF LOGGED IN ---------------- */
+  // Redirect if already logged in
   useEffect(() => {
     if (isLoggedIn && user) {
       onClose();
@@ -475,69 +476,17 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
     }
   }, [isLoggedIn, user, navigate, onClose]);
 
-  /* ---------------- CHECK USER (BACKEND) ---------------- */
-  const checkUser = async () => {
-    if (mobile.length !== 10) {
-      setError("Please enter a valid 10-digit mobile number");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-
-    // try {
-    //   const res = await fetch("/auth/check-user", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ mobile }),
-    //   });
-
-    //   const data = await res.json();
-
-    //   if (!data.exists) {
-    //     setStep("register");
-    //   } else {
-    //     await sendOtp();
-    //   }
-    // } catch {
-    //   setError("Server error. Try again.");
-    // } finally {
-    //   setLoading(false);
-    // }
-  };
-
-  /* ---------------- SETUP RECAPTCHA (from second code) ---------------- */
-  // const setupRecaptcha = async () => {
-  //   if (!window.recaptchaVerifier) {
-  //     // RecaptchaVerifier signature: (container, parameters, auth)
-  //     // ensure we pass container first and auth last
-  //     window.recaptchaVerifier = new RecaptchaVerifier(
-  //       "recaptcha-container",
-  //       { size: "invisible" },
-  //       auth
-  //     );
-  //     try {
-  //       await window.recaptchaVerifier.render();
-  //     } catch (renderErr) {
-  //       console.error("reCAPTCHA render failed:", renderErr);
-  //       throw renderErr;
-  //     }
-  //   }
-  // };
-
+  // Setup reCAPTCHA
   const setupRecaptcha = () => {
     try {
-      // 1. Clear any existing global verifier
       if (window.recaptchaVerifier) {
         window.recaptchaVerifier.clear();
         window.recaptchaVerifier = null;
       }
 
-      // 2. Clear the container HTML
       const container = document.getElementById("recaptcha-container");
       if (container) container.innerHTML = "";
 
-      // 3. Initialize fresh
       auth.useDeviceLanguage();
       window.recaptchaVerifier = new RecaptchaVerifier(
         auth,
@@ -547,6 +496,7 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
           callback: (response) => {
             console.log("reCAPTCHA solved:", response);
             setIsVerified(true);
+            setError("");
           },
           "expired-callback": () => {
             setIsVerified(false);
@@ -562,7 +512,6 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
   };
 
   useEffect(() => {
-    // Wait for modal animation to settle before initializing recaptcha
     const timer = setTimeout(() => {
       if (step === "mobile") {
         setupRecaptcha();
@@ -577,92 +526,9 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
         } catch (e) { }
         window.recaptchaVerifier = null;
       }
-      setIsVerified(false); // Reset verification on cleanup
+      setIsVerified(false);
     };
   }, [step]);
-
-  // const setupRecaptcha = async () => {
-  //   if (!window.recaptchaVerifier) {
-  //     window.recaptchaVerifier = new RecaptchaVerifier(
-  //       "recaptcha-container", // ✅ first param
-  //       {
-  //         size: "invisible",
-  //         callback: () => {
-  //           console.log("Recaptcha verified");
-  //         },
-  //       },
-  //       auth, // ✅ last param
-  //     );
-
-  //     await window.recaptchaVerifier.render();
-  //     console.log("AUTH OBJECT:", auth);
-  //   }
-  // };
-
-  /* ---------------- SEND OTP (from second code) ---------------- */
-  const sendOtp = async () => {
-    if (!navigator.onLine) {
-      setError("No internet connection. Please check your network.");
-      return;
-    }
-
-    if (mobile.length !== 10) {
-      setError("Please enter a valid 10-digit number.");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-    setMessage("");
-
-    try {
-      // Use the global window instance which is more stable for phone auth
-      const appVerifier = window.recaptchaVerifier;
-      if (!appVerifier || !isVerified) {
-        setError("Please verify the reCAPTCHA checkbox first.");
-        return;
-      }
-
-      const phoneNumber = `+91${mobile}`;
-      console.log("SENDING OTP TO:", phoneNumber);
-      const confirmationResult = await signInWithPhoneNumber(
-        auth,
-        phoneNumber,
-        appVerifier,
-      );
-
-      window.confirmationResult = confirmationResult;
-      setMessage("OTP sent successfully!");
-      setStep("otp");
-    } catch (err) {
-      console.error("OTP ERROR:", err);
-
-      // Reset reCAPTCHA on error so the user must solve it again
-      setIsVerified(false);
-      if (window.recaptchaVerifier) {
-        setupRecaptcha();
-      }
-
-      if (
-        err.code === "auth/invalid-app-credential" ||
-        err.message?.includes("INVALID_APP_CREDENTIAL")
-      ) {
-        setError(
-          "Authentication Error: Please ensure 'localhost' is added to 'Authorized Domains' in Firebase Console -> Authentication -> Settings.",
-        );
-      } else if (err.message?.includes("already-rendered")) {
-        setError("Connection lag. Please try clicking once more.");
-      } else if (err.code === "auth/too-many-requests") {
-        setError("Too many attempts. Please try again later.");
-      } else if (err.code === "auth/network-request-failed") {
-        setError("Network error. Please check your internet connection.");
-      } else {
-        setError(err.message || "Failed to send OTP. Try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     const handleOnline = () => setError("");
@@ -683,30 +549,63 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
     };
   }, []);
 
-  /* ---------------- REGISTER USER (BACKEND) ---------------- */
-  // const registerUser = async () => {
-  //   if (!name.trim()) {
-  //     setError("Please enter your name");
-  //     return;
-  //   }
+  // Send OTP
+  const sendOtp = async () => {
+    if (!navigator.onLine) {
+      setError("No internet connection. Please check your network.");
+      return;
+    }
 
-  //   setLoading(true);
-  //   setError("");
+    if (mobile.length !== 10) {
+      setError("Please enter a valid 10-digit number.");
+      return;
+    }
 
-  //   try {
-  //     await fetch("/auth/register", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ name, mobile }),
-  //     });
+    setLoading(true);
+    setError("");
+    setMessage("");
 
-  //     await sendOtp();
-  //   } catch {
-  //     setError("Registration failed");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+    try {
+      const appVerifier = window.recaptchaVerifier;
+      if (!appVerifier || !isVerified) {
+        setError("Please verify the reCAPTCHA checkbox first.");
+        return;
+      }
+
+      const phoneNumber = `+91${mobile}`;
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        phoneNumber,
+        appVerifier,
+      );
+
+      window.confirmationResult = confirmationResult;
+      setMessage("OTP sent successfully!");
+      setStep("otp");
+    } catch (err) {
+      console.error("OTP ERROR:", err);
+      setIsVerified(false);
+      if (window.recaptchaVerifier) {
+        setupRecaptcha();
+      }
+
+      if (err.code === "auth/invalid-app-credential" || err.message?.includes("INVALID_APP_CREDENTIAL")) {
+        setError("Authentication Error: Please ensure 'localhost' is added to 'Authorized Domains' in Firebase Console.");
+      } else if (err.message?.includes("already-rendered")) {
+        setError("Connection lag. Please try clicking once more.");
+      } else if (err.code === "auth/too-many-requests") {
+        setError("Too many attempts. Please try again later.");
+      } else if (err.code === "auth/network-request-failed") {
+        setError("Network error. Please check your internet connection.");
+      } else {
+        setError(err.message || "Failed to send OTP. Try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Register User
   const registerUser = async () => {
     if (!name.trim()) {
       setError("Please enter your name");
@@ -715,138 +614,26 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
     await sendOtp();
   };
 
-  /* ---------------- VERIFY OTP ---------------- */
-  // const verifyOtp = async () => {
-  //   try {
-  //     setLoading(true);
-
-  //     const result = await window.confirmationResult.confirm(otp);
-  //     const firebaseUser = result.user;
-
-  //     let backendUser = null;
-  //     let backendToken = null;
-  //     try {
-  //       const backendResp = await fetch(`${API_BASE_URL}/api/otp/verify-otp`, {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({ phone: mobile, otp }),
-  //       });
-  //       const backendData = await backendResp.json();
-  //       if (backendData?.success) {
-  //         backendUser = backendData?.data?.user || null;
-  //         backendToken = backendData?.data?.token || null;
-  //       }
-  //     } catch {
-  //       // keep firebase-only session fallback
-  //     }
-
-  //     const sessionUser = {
-  //       _id: backendUser?._id || null,
-  //       id: backendUser?._id || firebaseUser.uid,
-  //       name: backendUser?.name || name?.trim() || "User",
-  //       mobileNo: backendUser?.mobileNo || mobile,
-  //       phoneNumber: firebaseUser.phoneNumber,
-  //     };
-
-  //     localStorage.setItem("user", JSON.stringify(sessionUser));
-  //     if (backendUser?._id) {
-  //       localStorage.setItem("backendUserId", backendUser._id);
-  //       localStorage.setItem("userId", backendUser._id);
-  //     }
-  //     if (backendToken) {
-  //       localStorage.setItem("authToken", backendToken);
-  //     }
-  //     localStorage.setItem("isLoggedIn", "true");
-  //     localStorage.setItem("authRole", "user");
-
-  //     onClose();
-  //     navigate("/user-profile");
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Invalid OTP");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  //   const verifyOtp = async () => {
-  //     try {
-  //       setLoading(true);
-
-  //       // ✅ Firebase OTP verify
-  //       const result = await window.confirmationResult.confirm(otp);
-  //       const firebaseUser = result.user;
-
-  //       console.log("Firebase User:", firebaseUser);
-
-  //     // ✅ Send to backend (NO OTP)
-  //     const Token = await firebaseUser.getIdToken();
-  //     console.log("ID Token:", Token);
-
-  // const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify({
-  //     idToken: firebaseUser.accessToken,
-  //     firebaseUid: firebaseUser.uid,
-  //     phone: firebaseUser.phoneNumber,
-  //   }),
-  // });
-
-  //  console.log("ID Token:", idToken);
-
-  //       const data = await backendResp.json();
-  //       console.log("Backend Response:", data);
-
-  //       if (!data.success) {
-  //         throw new Error(data.message);
-  //       }
-
-  //       // ✅ Save session
-  //       localStorage.setItem("user", JSON.stringify(data.data.user));
-  //       localStorage.setItem("authToken", data.data.token);
-  //       localStorage.setItem("isLoggedIn", "true");
-
-  //       onClose();
-  //       navigate("/user-profile");
-  //     } catch (err) {
-  //       console.error(err);
-  //       setError("OTP verification failed");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
+  // Verify OTP
   const verifyOtp = async () => {
     try {
       setLoading(true);
 
-      // ✅ Step 1: Confirm OTP with Firebase
       const result = await window.confirmationResult.confirm(otp);
       const firebaseUser = result.user;
-      console.log("Firebase User Object Details:", {
-        uid: firebaseUser.uid,
-        phoneNumber: firebaseUser.phoneNumber,
-      });
 
-      // ✅ Step 2: Get proper ID token using the modular v9 syntax
       const idToken = await getIdToken(firebaseUser, true);
-      console.log("Extracted ID Token:", idToken ? "Exists (length: " + idToken.length + ")" : "undefined");
+      console.log("ID Token length:", idToken?.length);
 
       if (!idToken || !firebaseUser.uid || !firebaseUser.phoneNumber) {
-        throw new Error("Missing required Firebase fields before sending to Backend.");
+        throw new Error("Missing required Firebase fields.");
       }
 
-      // ✅ Step 3: Send to backend
       const payload = {
         idToken: idToken,
         firebaseUid: firebaseUser.uid,
         phone: firebaseUser.phoneNumber,
       };
-
-      console.log("Payload sending to backend:", payload);
 
       const backendResp = await fetch(`${API_BASE_URL}/api/firebase/login`, {
         method: "POST",
@@ -855,16 +642,15 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
       });
 
       const data = await backendResp.json();
-      console.log("Backend Response:", data);
 
       if (!data.success) {
         throw new Error(data.message);
       }
 
-      // ✅ Step 4: Save session
       localStorage.setItem("user", JSON.stringify(data.data.user));
       localStorage.setItem("authToken", data.data.token);
       localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("authRole", "user");
 
       onClose();
       navigate("/user-profile");
@@ -876,54 +662,39 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
     }
   };
 
-  /* ---------------- GOOGLE LOGIN ---------------- */
+  // Google Login
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
       setError("");
 
       const result = await signInWithPopup(auth, googleProvider);
-
       const firebaseUser = result.user;
-      let backendUser = null;
-      let backendToken = null;
-      try {
-        const backendResp = await fetch(
-          `${API_BASE_URL}/api/auth/social-login`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: firebaseUser.email || "",
-              name: firebaseUser.displayName || "Google User",
-              profile: firebaseUser.photoURL || "",
-            }),
-          },
-        );
-        const backendData = await backendResp.json();
-        if (backendResp.ok && backendData?.data) {
-          backendUser = backendData.data;
-          backendToken = backendData.token || null;
-        }
-      } catch {
-        // fallback to firebase session only
+
+      const idToken = await getIdToken(firebaseUser, true);
+
+      const payload = {
+        idToken: idToken,
+        firebaseUid: firebaseUser.uid,
+        email: firebaseUser.email || "",
+        name: firebaseUser.displayName || "Google User",
+        profile: firebaseUser.photoURL || "",
+      };
+
+      const backendResp = await fetch(`${API_BASE_URL}/api/firebase/google-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await backendResp.json();
+
+      if (!data.success) {
+        throw new Error(data.message);
       }
 
-      const sessionUser = {
-        _id: backendUser?._id || null,
-        id: backendUser?._id || firebaseUser.uid,
-        name: backendUser?.name || firebaseUser.displayName || "Google User",
-        email: backendUser?.email || firebaseUser.email || "",
-        profileImage: backendUser?.profile || firebaseUser.photoURL || "",
-      };
-      localStorage.setItem("user", JSON.stringify(sessionUser));
-      if (backendUser?._id) {
-        localStorage.setItem("backendUserId", backendUser._id);
-        localStorage.setItem("userId", backendUser._id);
-      }
-      if (backendToken) {
-        localStorage.setItem("authToken", backendToken);
-      }
+      localStorage.setItem("user", JSON.stringify(data.data.user));
+      localStorage.setItem("authToken", data.data.token);
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("authRole", "user");
 
@@ -931,13 +702,12 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
       navigate("/user-profile");
     } catch (err) {
       console.error(err);
-      setError("Google sign-in failed");
+      setError("Google sign-in failed: " + err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  /* ---------------- OTHER HANDLERS ---------------- */
   const handleAstrologerLogin = () => {
     onClose();
     navigate("/astrologer-login");
@@ -949,59 +719,95 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
     }
   };
 
-  /* ---------------- UI ---------------- */
   return (
     <div className="auth-backdrop" onClick={handleBackdropClick}>
       <motion.div
         className="auth-modal"
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
+        initial={{ scale: 0.9, opacity: 0, y: 50 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 50 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Cosmic Background Effect */}
+        <div className="auth-cosmic-bg">
+          <div className="auth-star"></div>
+          <div className="auth-star"></div>
+          <div className="auth-star"></div>
+          <div className="auth-star"></div>
+        </div>
+
         <button className="auth-close" onClick={onClose}>
           <IoClose />
         </button>
 
-        {/* LEFT */}
+        {/* LEFT SIDE - Image */}
         <div className="auth-left">
-          <img src={authImage} alt="Auth" />
+          <div className="auth-left-overlay"></div>
+          <img src={authImage} alt="Authentication" />
+          <div className="auth-left-text">
+            <MdStar className="left-star" />
+            <h3>Welcome to KalpJyotish</h3>
+            <p>Discover your cosmic path with expert astrologers</p>
+          </div>
         </div>
 
-        {/* RIGHT */}
+        {/* RIGHT SIDE - Form */}
         <div className="auth-right">
-          {error && <p className="error-text">{error}</p>}
-          {message && <p className="info-text">{message}</p>}
+          {error && (
+            <div className="error-alert">
+              <span className="error-icon">⚠️</span>
+              <span>{error}</span>
+            </div>
+          )}
+          {message && (
+            <div className="success-alert">
+              <span className="success-icon">✓</span>
+              <span>{message}</span>
+            </div>
+          )}
 
-          <div
-            id="recaptcha-container"
-            className="recaptcha-box"
-            style={{ display: step === "mobile" ? "flex" : "none" }}
-          ></div>
+          <div id="recaptcha-container" className="recaptcha-box" style={{ display: step === "mobile" ? "flex" : "none" }}></div>
 
           {step === "mobile" && (
             <>
-              <h2>Log In</h2>
-              <p className="subtitle">Enter your mobile number to continue</p>
+              <div className="auth-header">
+                <div className="header-icon">
+                  <MdPhone />
+                </div>
+                <h2>Welcome Back</h2>
+                <p className="subtitle">Enter your mobile number to continue your cosmic journey</p>
+              </div>
 
-              <input
-                type="tel"
-                placeholder="Mobile Number"
-                value={mobile}
-                maxLength="10"
-                onChange={(e) => {
-                  setMobile(e.target.value.replace(/\D/g, ""));
-                  setError("");
-                  setIsVerified(false); // Force re-verification if number changes
-                }}
-              />
+              <div className="input-group">
+                <div className="input-icon-wrapper">
+                  <MdPhone className="input-icon" />
+                  <input
+                    type="tel"
+                    placeholder="Mobile Number"
+                    value={mobile}
+                    maxLength="10"
+                    onChange={(e) => {
+                      setMobile(e.target.value.replace(/\D/g, ""));
+                      setError("");
+                      setIsVerified(false);
+                    }}
+                  />
+                </div>
+              </div>
 
               <button
                 disabled={mobile.length !== 10 || loading || !isVerified}
                 onClick={sendOtp}
                 className="primary-btn"
               >
-                {loading ? "Please wait..." : "Continue"}
+                {loading ? (
+                  <div className="btn-loader"></div>
+                ) : (
+                  <>
+                    Continue <MdArrowForward />
+                  </>
+                )}
               </button>
 
               <div className="divider">
@@ -1009,110 +815,142 @@ export default function AuthModal({ onClose, isLoggedIn, user }) {
               </div>
 
               <button className="google-btn" onClick={handleGoogleLogin}>
-                <FcGoogle size={20} />
+                <FcGoogle size={22} />
                 <span>Continue with Google</span>
               </button>
 
-              <button
-                className="astrologer-btn"
-                onClick={handleAstrologerLogin}
-              >
-                Login as Astrologer
+              <button className="astrologer-btn" onClick={handleAstrologerLogin}>
+                <MdStar />
+                <span>Login as Astrologer</span>
               </button>
             </>
           )}
 
           {step === "otp" && (
             <>
-              <h3>Verify OTP</h3>
-              <p className="subtitle">
-                Enter the 6-digit code sent to {mobile}
-              </p>
+              <div className="auth-header">
+                <div className="header-icon">
+                  <MdLock />
+                </div>
+                <h3>Verify OTP</h3>
+                <p className="subtitle">Enter the 6-digit code sent to <strong>{mobile}</strong></p>
+              </div>
 
-              <input
-                type="text"
-                placeholder="Enter OTP"
-                value={otp}
-                maxLength="6"
-                onChange={(e) => {
-                  setOtp(e.target.value.replace(/\D/g, ""));
-                  setError("");
-                }}
-              />
+              <div className="input-group">
+                <div className="input-icon-wrapper">
+                  <MdLock className="input-icon" />
+                  <input
+                    type="text"
+                    placeholder="Enter OTP"
+                    value={otp}
+                    maxLength="6"
+                    onChange={(e) => {
+                      setOtp(e.target.value.replace(/\D/g, ""));
+                      setError("");
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="otp-inputs">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className={`otp-digit ${otp[i] ? "filled" : ""}`}>
+                    {otp[i] || ""}
+                  </div>
+                ))}
+              </div>
 
               <button
                 disabled={otp.length !== 6 || loading}
                 onClick={verifyOtp}
                 className="primary-btn"
               >
-                {loading ? "Verifying..." : "Verify & Login"}
+                {loading ? (
+                  <div className="btn-loader"></div>
+                ) : (
+                  <>
+                    Verify & Login <MdVerified />
+                  </>
+                )}
               </button>
 
-              <button
-                className="back-btn"
-                onClick={() => {
+              <div className="otp-actions">
+                <button className="back-btn" onClick={() => {
                   setStep("mobile");
                   setOtp("");
                   setMessage("");
                   setError("");
-                }}
-              >
-                Change Number
-              </button>
-
-              <button className="resend-btn" onClick={sendOtp}>
-                Resend OTP
-              </button>
+                }}>
+                  ← Change Number
+                </button>
+                <button className="resend-btn" onClick={sendOtp}>
+                  Resend OTP
+                </button>
+              </div>
             </>
           )}
 
           {step === "register" && (
             <>
-              <h3>Create Account</h3>
-              <p className="subtitle">Please enter your details to register</p>
+              <div className="auth-header">
+                <div className="header-icon">
+                  <MdPerson />
+                </div>
+                <h3>Create Account</h3>
+                <p className="subtitle">Please enter your details to register</p>
+              </div>
 
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  setError("");
-                }}
-              />
+              <div className="input-group">
+                <div className="input-icon-wrapper">
+                  <MdPerson className="input-icon" />
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      setError("");
+                    }}
+                  />
+                </div>
+              </div>
 
-              <input
-                type="tel"
-                value={mobile}
-                disabled
-                className="disabled-input"
-              />
+              <div className="input-group">
+                <div className="input-icon-wrapper">
+                  <MdPhone className="input-icon" />
+                  <input type="tel" value={mobile} disabled className="disabled-input" />
+                </div>
+              </div>
 
               <button
                 disabled={!name.trim() || loading}
                 onClick={registerUser}
                 className="primary-btn"
               >
-                {loading ? "Registering..." : "Register & Continue"}
+                {loading ? (
+                  <div className="btn-loader"></div>
+                ) : (
+                  <>
+                    Register & Continue <MdArrowForward />
+                  </>
+                )}
               </button>
 
-              <button
-                className="back-btn"
-                onClick={() => {
-                  setStep("mobile");
-                  setName("");
-                  setMobile("");
-                  setError("");
-                  setMessage("");
-                }}
-              >
-                Back
+              <button className="back-btn" onClick={() => {
+                setStep("mobile");
+                setName("");
+                setError("");
+                setMessage("");
+              }}>
+                ← Back
               </button>
             </>
           )}
-        </div>
 
-        {/* 🔥 REQUIRED FOR FIREBASE reCAPTCHA */}
+          <div className="auth-footer">
+            <p>By continuing, you agree to our <a href="/terms">Terms</a> & <a href="/privacy-policy">Privacy Policy</a></p>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

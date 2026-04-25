@@ -1,213 +1,791 @@
 /* src/components/BlogSection.css */
-.blog-section {
-    padding: 6rem 0;
-    background-color: #000000;
-    overflow: hidden;
+
+/* ========================================
+   BLOG SECTION - PROFESSIONAL ASTROLOGY THEME
+======================================== */
+
+:root {
+  --blog-gold: #ffd700;
+  --blog-gold-dark: #f59e0b;
+  --blog-purple: #6b21e5;
+  --blog-bg: #000000;
+  --blog-card-bg: rgba(26, 11, 46, 0.8);
+  --blog-text: #ffffff;
+  --blog-text-muted: #c9b3e0;
+  --blog-border: rgba(255, 215, 0, 0.15);
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
+/* ========================================
+   MAIN SECTION
+======================================== */
+
+.blog-section {
+  position: relative;
+  padding: 5rem 2rem;
+  background: linear-gradient(180deg, #0a0a0a 0%, #1a0b2e 100%);
+  overflow: hidden;
+}
+
+/* Cosmic Background */
+.blog-cosmic-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.blog-nebula {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--blog-purple), transparent);
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  bottom: -100px;
+  left: -100px;
+  animation: floatNebula 20s ease-in-out infinite;
+}
+
+@keyframes floatNebula {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+}
+
+.blog-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.blog-stars .star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.5);
+  }
+}
+
+/* Container */
+.blog-container {
+  position: relative;
+  z-index: 10;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header */
+.blog-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid var(--blog-border);
+  border-radius: 50px;
+  margin-bottom: 1rem;
+}
+
+.header-badge svg {
+  color: var(--blog-gold);
+  width: 14px;
+  height: 14px;
+}
+
+.header-badge span {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--blog-gold);
+  letter-spacing: 1px;
 }
 
 .blog-section-title {
-    text-align: center;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 4rem;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--blog-text);
 }
 
-/* DESKTOP: A flexible grid */
+.title-highlight {
+  background: linear-gradient(135deg, var(--blog-gold), var(--blog-gold-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.blog-subtitle {
+  font-size: 1rem;
+  color: var(--blog-text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ========================================
+   SCROLL ARROWS (Desktop)
+======================================== */
+
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid var(--blog-border);
+  color: var(--blog-gold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 20;
+}
+
+.scroll-arrow:hover {
+  background: rgba(255, 215, 0, 0.2);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.scroll-arrow.left {
+  left: 20px;
+}
+
+.scroll-arrow.right {
+  right: 20px;
+}
+
+/* ========================================
+   BLOG GRID
+======================================== */
+
 .blog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  position: relative;
 }
 
-/* --- Blog Card Styling (Remains mostly the same) --- */
+/* ========================================
+   BLOG POST CARD STYLES
+======================================== */
+
 .blog-card {
-    background: #610161;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 184, 51, 0.1);
+  position: relative;
+  background: var(--blog-card-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--blog-border);
+  border-radius: 24px;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
+.blog-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--blog-gold);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Glow Effect */
+.blog-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--blog-gold), transparent);
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+
+.blog-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Image Slider Container */
 .blog-card-slider {
-    position: relative;
-    aspect-ratio: 16 / 10;
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
 }
 
 .blog-slide {
-    background-size: cover;
-    background-position: center;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.5s ease;
 }
 
+.blog-card:hover .blog-slide {
+  transform: scale(1.05);
+}
+
+/* Category Badge */
 .blog-card-category {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    background-color: rgba(18, 14, 10, 0.7);
-    backdrop-filter: blur(5px);
-    color: var(--primary-color);
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    z-index: 10;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  color: var(--blog-gold);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  border: 1px solid var(--blog-border);
 }
 
+/* Content */
 .blog-card-content {
-    padding: 1.5rem;
+  padding: 1.5rem;
+}
+
+.blog-card-title {
+  margin-bottom: 0.75rem;
 }
 
 .blog-card-title a {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--text-color);
-    line-height: 1.3;
-    transition: color 0.3s ease;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--blog-text);
+  text-decoration: none;
+  line-height: 1.3;
+  transition: color 0.3s ease;
 }
 
 .blog-card-title a:hover {
-    color: var(--primary-color);
+  color: var(--blog-gold);
 }
 
+/* Meta Info */
 .blog-card-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: var(--text-color);
-    opacity: 0.7;
-    margin: 1rem 0;
-    border-top: 1px solid rgba(255, 184, 51, 0.1);
-    border-bottom: 1px solid rgba(255, 184, 51, 0.1);
-    padding: 0.5rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--blog-text-muted);
+  padding: 0.75rem 0;
+  margin: 0.75rem 0;
+  border-top: 1px solid var(--blog-border);
+  border-bottom: 1px solid var(--blog-border);
 }
 
+.meta-date, .meta-read-time {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.meta-date svg, .meta-read-time svg {
+  font-size: 0.7rem;
+}
+
+/* Excerpt */
 .blog-card-excerpt {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--text-color);
-    opacity: 0.9;
-    margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--blog-text-muted);
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
+/* Read More Button */
 .read-more-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    color: var(--primary-color);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--blog-gold);
+  text-decoration: none;
+  transition: all 0.3s ease;
 }
 
 .read-more-btn svg {
-    transition: transform 0.3s ease;
+  transition: transform 0.3s ease;
+}
+
+.read-more-btn:hover {
+  gap: 0.75rem;
 }
 
 .read-more-btn:hover svg {
-    transform: translateX(5px);
+  transform: translateX(5px);
 }
 
+/* Swiper Navigation */
 .blog-card .swiper-button-next,
 .blog-card .swiper-button-prev {
-    color: white;
-    background-color: rgba(0, 0, 0, 0.3);
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  border-radius: 50%;
+  transition: all 0.3s ease;
 }
 
 .blog-card .swiper-button-next:hover,
 .blog-card .swiper-button-prev:hover {
-    background-color: rgba(0, 0, 0, 0.6);
+  background: var(--blog-gold);
 }
 
 .blog-card .swiper-button-next::after,
 .blog-card .swiper-button-prev::after {
-    font-size: 14px;
-    font-weight: 900;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
 }
 
 .blog-card .swiper-pagination-progressbar {
-    background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .blog-card .swiper-pagination-progressbar-fill {
-    background: var(--primary-color);
+  background: var(--blog-gold);
+}
+
+/* ========================================
+   MOBILE RESPONSIVE - HORIZONTAL SCROLL
+======================================== */
+
+@media (max-width: 768px) {
+  .blog-section {
+    padding: 3rem 0;
+  }
+
+  .blog-container {
+    padding: 0;
+  }
+
+  .blog-header {
+    padding: 0 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .blog-section-title {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-subtitle {
+    font-size: 0.85rem;
+  }
+
+  /* Horizontal Scroll Layout */
+  .blog-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1rem;
+    padding: 0 1rem 1rem 1rem;
+    margin: 0;
+    
+    /* Hide scrollbar */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .blog-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Card styling for horizontal scroll */
+  .blog-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-card-content {
+    padding: 1.25rem;
+  }
+
+  .blog-card-title a {
+    font-size: 1.1rem;
+  }
+
+  .blog-card-excerpt {
+    font-size: 0.85rem;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  /* Scroll Indicators */
+  .scroll-indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .scroll-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50px;
+    font-size: 0.7rem;
+    color: var(--blog-text-muted);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  /* Hide desktop arrows on mobile */
+  .scroll-arrow {
+    display: none;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 576px) {
+  .blog-card {
+    flex: 0 0 90%;
+  }
+
+  .blog-card-content {
+    padding: 1rem;
+  }
+
+  .blog-card-title a {
+    font-size: 1rem;
+  }
+
+  .blog-card-meta {
+    font-size: 0.65rem;
+  }
+
+  .read-more-btn {
+    font-size: 0.8rem;
+  }
+}
+
+/* Extra Small */
+@media (max-width: 375px) {
+  .blog-card {
+    flex: 0 0 92%;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-nebula,
+  .blog-stars .star,
+  .blog-card,
+  .blog-card::before,
+  .blog-slide,
+  .scroll-arrow {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .blog-card {
+    border: 2px solid var(--blog-gold);
+  }
+  
+  .read-more-btn {
+    color: var(--blog-gold);
+  }
+}
+
+/* ========================================
+   ANIMATIONS
+======================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.blog-card {
+  animation: fadeInUp 0.6s ease-out;
 }
 
 
-/* ===============================================
-   RESPONSIVE DESIGN: MOBILE SCROLL SNAP
-   =============================================== */
+/* Add to BlogSection.css - Enhanced Blog Card Styles */
 
+/* Blog Card Glow Effect */
+.blog-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.blog-card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 215, 0, 0.08), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.blog-card:hover .blog-card-glow {
+  opacity: 1;
+}
+
+/* Enhanced Meta Section */
+.blog-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--blog-text-muted, #c9b3e0);
+  padding: 0.75rem 0;
+  margin: 0.75rem 0;
+  border-top: 1px solid var(--blog-border, rgba(255, 215, 0, 0.15));
+  border-bottom: 1px solid var(--blog-border, rgba(255, 215, 0, 0.15));
+}
+
+.meta-author,
+.meta-date,
+.meta-read-time {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.meta-author svg,
+.meta-date svg,
+.meta-read-time svg {
+  font-size: 0.7rem;
+  color: var(--blog-gold, #ffd700);
+}
+
+/* Enhanced Swiper Styles */
+.blog-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.blog-swiper .swiper-button-next,
+.blog-swiper .swiper-button-prev {
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.blog-swiper .swiper-button-next::after,
+.blog-swiper .swiper-button-prev::after {
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.blog-swiper .swiper-button-next:hover,
+.blog-swiper .swiper-button-prev:hover {
+  background: var(--blog-gold, #ffd700);
+}
+
+.blog-swiper .swiper-button-next:hover::after,
+.blog-swiper .swiper-button-prev:hover::after {
+  color: #1a0a2e;
+}
+
+.blog-swiper .swiper-pagination-progressbar {
+  background: rgba(255, 255, 255, 0.2);
+  top: auto;
+  bottom: 0;
+  height: 2px;
+}
+
+.blog-swiper .swiper-pagination-progressbar-fill {
+  background: var(--blog-gold, #ffd700);
+}
+
+/* Slide styling */
+.blog-slide {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: transform 0.5s ease;
+}
+
+.blog-card:hover .blog-slide {
+  transform: scale(1.05);
+}
+
+/* Category Badge Enhancement */
+.blog-card-category {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  color: var(--blog-gold, #ffd700);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  border: 1px solid var(--blog-border, rgba(255, 215, 0, 0.3));
+  text-transform: uppercase;
+}
+
+/* Title Enhancement */
+.blog-card-title {
+  margin-bottom: 0.5rem;
+}
+
+.blog-card-title a {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--blog-text, #ffffff);
+  text-decoration: none;
+  line-height: 1.3;
+  transition: color 0.3s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.blog-card-title a:hover {
+  color: var(--blog-gold, #ffd700);
+}
+
+/* Excerpt Enhancement */
+.blog-card-excerpt {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--blog-text-muted, #c9b3e0);
+  margin-bottom: 1.25rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Read More Button Enhancement */
+.read-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--blog-gold, #ffd700);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.read-more-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.read-more-btn:hover {
+  gap: 0.75rem;
+}
+
+.read-more-btn:hover svg {
+  transform: translateX(5px);
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
-    .blog-section {
-        padding: 4rem 0;
-    }
+  .blog-card-meta {
+    gap: 0.75rem;
+    font-size: 0.65rem;
+  }
+  
+  .blog-card-title a {
+    font-size: 1.1rem;
+  }
+  
+  .blog-card-excerpt {
+    font-size: 0.85rem;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+  
+  .read-more-btn {
+    font-size: 0.8rem;
+  }
+  
+  .blog-swiper .swiper-button-next,
+  .blog-swiper .swiper-button-prev {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .blog-swiper .swiper-button-next::after,
+  .blog-swiper .swiper-button-prev::after {
+    font-size: 8px;
+  }
+}
 
-    /* Override container to remove side padding on mobile, as the scroll area handles it */
-    .container {
-        padding: 0;
-        max-width: 100%;
-    }
-
-    .blog-section-title {
-        font-size: 2rem;
-        margin-bottom: 2.5rem;
-        padding: 0 1rem;
-        /* Add padding back to the title only */
-    }
-
-    /* KEY CHANGE: Transform the grid into a scrollable flex container */
-    .blog-grid {
-        display: flex;
-        /* Switch from grid to flex */
-        overflow-x: auto;
-        /* Enable horizontal scrolling */
-        scroll-snap-type: x mandatory;
-        /* The magic for snapping */
-        scroll-behavior: smooth;
-        gap: 1rem;
-        /* Space between cards */
-
-        /* Add padding to show a "peek" of the next card */
-        padding: 0 1rem 1rem 1rem;
-
-        /* Hide the scrollbar for a clean, app-like look */
-        -ms-overflow-style: none;
-        /* IE and Edge */
-        scrollbar-width: none;
-        /* Firefox */
-    }
-
-    .blog-grid::-webkit-scrollbar {
-        display: none;
-        /* Chrome, Safari, and Opera */
-    }
-
-    /* Adjust each card for the new flex layout */
-    .blog-card {
-        flex: 0 0 90%;
-        /* Each card takes up 90% of the width. Change to 100% for full-screen cards. */
-        scroll-snap-align: center;
-        /* Snap the center of the card to the center of the viewport */
-    }
-
-    /* Minor typography adjustments for mobile cards */
-    .blog-card-content {
-        padding: 1.25rem;
-    }
-
-    .blog-card-title a {
-        font-size: 1.2rem;
-    }
-
-    .blog-card-excerpt {
-        font-size: 0.9rem;
-    }
+@media (max-width: 576px) {
+  .blog-card-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .blog-card-category {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.6rem;
+  }
 }

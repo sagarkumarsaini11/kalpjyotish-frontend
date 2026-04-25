@@ -1,181 +1,680 @@
+/* src/components/PoojaSection.css */
+
 :root {
-  --pooja-bg: #f5f5f5;
-  --pooja-card-bg: #222222;
-  --pooja-primary: #FFB833;
-  --pooja-text: #BDBDBD;
-  --pooja-glow: rgba(255, 184, 51, 0.4);
+  --pooja-bg: #000000;
+  --pooja-card-bg: rgba(26, 11, 46, 0.8);
+  --pooja-primary: #ffd700;
+  --pooja-primary-dark: #f59e0b;
+  --pooja-secondary: #6b21e5;
+  --pooja-text: #c9b3e0;
+  --pooja-text-light: #ffffff;
+  --pooja-border: rgba(255, 215, 0, 0.15);
+  --pooja-glow: rgba(255, 215, 0, 0.3);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
-.pooja-section {
-  padding: 5rem 2rem;
-  /* background-color: var(--pooja-bg); */
-  background-color: #000000;
+/* ========================================
+   INTRO SCREEN
+======================================== */
+
+.pooja-intro-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f0c29 0%, #1a0b2e 50%, #24243e 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.pooja-intro-container {
+  position: relative;
+  z-index: 10;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.intro-cosmic-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.intro-nebula {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--pooja-secondary), transparent);
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulseNebula 4s ease-in-out infinite;
+}
+
+@keyframes pulseNebula {
+  0%, 100% {
+    opacity: 0.2;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+.intro-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.intro-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.5);
+  }
+}
+
+.pooja-intro-content {
+  position: relative;
+  z-index: 10;
   text-align: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 48px;
+  padding: 3rem;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.intro-icon-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 2rem;
+}
+
+.intro-icon-ring {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pooja-primary), var(--pooja-secondary));
+  animation: rotateRing 3s linear infinite;
+}
+
+@keyframes rotateRing {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.intro-icon {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background: var(--pooja-card-bg);
+  border-radius: 50%;
+  color: var(--pooja-primary);
+  font-size: 3rem;
+  z-index: 2;
+}
+
+.intro-title {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--pooja-primary), var(--pooja-primary-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+}
+
+.intro-subtitle {
+  font-size: 1rem;
+  color: var(--pooja-text);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.intro-features {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.intro-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 30px;
+  font-size: 0.85rem;
+  color: var(--pooja-text);
+}
+
+.intro-feature svg {
+  color: var(--pooja-primary);
+}
+
+.intro-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, var(--pooja-primary), var(--pooja-primary-dark));
+  border: none;
+  border-radius: 60px;
+  color: #1a0a2e;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.intro-cta-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+}
+
+/* ========================================
+   MAIN POOJA SECTION
+======================================== */
+
+.pooja-section-main {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0b2e 100%);
+  padding: 6rem 2rem;
   min-height: 100vh;
 }
 
-.pooja-main-title {
-  font-size: 2.5rem;
-  font-weight: 700;
+.pooja-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.pooja-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid var(--pooja-border);
+  border-radius: 50px;
+  margin-bottom: 1rem;
+}
+
+.pooja-header-badge svg {
   color: var(--pooja-primary);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 0.5rem;
+}
+
+.pooja-header-badge span {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--pooja-primary);
+  letter-spacing: 1px;
+}
+
+.pooja-main-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 0%, var(--pooja-primary) 50%, var(--pooja-primary-dark) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
 }
 
 .pooja-subtitle {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--pooja-text);
-  margin-bottom: 4rem;
-  opacity: 0.8;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
 }
+
+/* ========================================
+   TABS CONTAINER
+======================================== */
 
 .tabs-container {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.5rem;
   margin-bottom: 3rem;
   flex-wrap: wrap;
 }
 
 .tab-button {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--pooja-text);
-  background: transparent;
-  border: none;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--pooja-border);
+  border-radius: 60px;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+  background: rgba(255, 215, 0, 0.1);
+  color: var(--pooja-primary);
+  transform: translateY(-2px);
 }
 
 .tab-button.active {
-  color: var(--pooja-primary);
+  background: linear-gradient(135deg, var(--pooja-primary), var(--pooja-primary-dark));
+  color: #1a0a2e;
+  border-color: transparent;
+}
+
+.tab-icon {
+  font-size: 1rem;
 }
 
 .active-tab-underline {
   position: absolute;
-  bottom: 0;
+  bottom: -2px;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 2px;
   background: var(--pooja-primary);
   border-radius: 2px;
 }
 
-/* --- Pooja Card Grid --- */
+/* ========================================
+   POOJA GRID
+======================================== */
+
 .pooja-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 2.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .pooja-card {
-  background-color: var(--pooja-card-bg);
-  border-radius: 16px;
+  background: var(--pooja-card-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--pooja-border);
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  /* --- MODIFIED: Use Flexbox to manage the card's internal layout --- */
-  display: flex;
-  flex-direction: column;
-  /* background-color: aqua; */
+  transition: all 0.3s ease;
 }
 
+.pooja-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--pooja-primary);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.pooja-card-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Image Container */
 .pooja-image-container {
   position: relative;
-  height: 200px;
-  width: 100%;
-  /* --- MODIFIED: Add a dark background to the image area --- */
-  background-color: #f5f5f5;
-  flex-shrink: 0;
-  /* Prevents the image container from shrinking */
-
+  height: 220px;
+  overflow: hidden;
 }
 
 .pooja-image {
   width: 100%;
   height: 100%;
-  /* object-fit: contain; */
-  transition: transform 0.4s ease;
+  object-fit: cover;
+  transition: transform 0.5s ease;
 }
 
+.pooja-card:hover .pooja-image {
+  transform: scale(1.05);
+}
+
+.pooja-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pooja-card:hover .pooja-image-overlay {
+  opacity: 1;
+}
+
+.overlay-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--pooja-primary), var(--pooja-primary-dark));
+  border-radius: 40px;
+  color: #1a0a2e;
+  font-weight: 600;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.pooja-card:hover .overlay-content {
+  transform: translateY(0);
+}
+
+.pooja-category-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  font-size: 0.7rem;
+  color: var(--pooja-primary);
+  border: 1px solid var(--pooja-border);
+}
+
+/* Content */
 .pooja-content {
   padding: 1.5rem;
-  text-align: left;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
 }
 
 .pooja-name {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--pooja-text-light);
   margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.pooja-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  color: var(--pooja-text);
+}
+
+.meta-item svg {
+  color: var(--pooja-primary);
+  font-size: 0.8rem;
 }
 
 .pooja-description {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: var(--pooja-text);
-  line-height: 1.6;
+  line-height: 1.5;
   margin-bottom: 1.5rem;
-  flex-grow: 1;
-  overflow: hidden;
+  flex: 1;
   display: -webkit-box;
   -webkit-line-clamp: 3;
-  line-clamp: 1;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Footer */
+.pooja-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--pooja-border);
+}
+
+.pooja-price {
+  display: flex;
+  flex-direction: column;
+}
+
+.price-label {
+  font-size: 0.65rem;
+  color: var(--pooja-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.price-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--pooja-primary);
 }
 
 .pooja-details-button {
-  display: inline-block;
-  background: var(--pooja-primary);
-  color: #111;
-  padding: 0.7rem 1.5rem;
-  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid var(--pooja-border);
+  border-radius: 40px;
+  color: var(--pooja-primary);
   text-decoration: none;
+  font-size: 0.85rem;
   font-weight: 600;
   transition: all 0.3s ease;
-  /* --- MODIFIED: Make the button align itself at the start of its area --- */
-  align-self: flex-start;
 }
 
 .pooja-details-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px var(--pooja-glow);
+  background: linear-gradient(135deg, var(--pooja-primary), var(--pooja-primary-dark));
+  color: #1a0a2e;
+  transform: translateX(5px);
 }
 
-/* --- Loader & Error --- */
+/* ========================================
+   LOADER
+======================================== */
+
 .loader-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 300px;
+  min-height: 400px;
 }
 
-.loader {
-  border: 5px solid rgba(255, 255, 255, 0.2);
-  border-top: 5px solid var(--pooja-primary);
+.cosmic-loader {
+  position: relative;
+  text-align: center;
+}
+
+.loader-ring {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border: 3px solid transparent;
+  border-top-color: var(--pooja-primary);
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
+.loader-ring:nth-child(2) {
+  width: 80px;
+  height: 80px;
+  border-top-color: var(--pooja-secondary);
+  animation-duration: 1.2s;
+  top: -10px;
+  left: -10px;
+}
 
-  100% {
+.loader-ring:nth-child(3) {
+  width: 100px;
+  height: 100px;
+  border-top-color: var(--pooja-primary-dark);
+  animation-duration: 1.4s;
+  top: -20px;
+  left: -20px;
+}
+
+@keyframes spin {
+  to {
     transform: rotate(360deg);
   }
 }
 
+.cosmic-loader p {
+  margin-top: 100px;
+  color: var(--pooja-text);
+  font-size: 0.9rem;
+}
+
+/* ========================================
+   ERROR STATE
+======================================== */
+
+.error-container {
+  text-align: center;
+  padding: 4rem;
+}
+
+.error-icon {
+  font-size: 4rem;
+  color: var(--pooja-primary);
+  margin-bottom: 1rem;
+}
+
 .error-message {
-  color: #ff6b6b;
-  font-size: 1.2rem;
+  color: #f87171;
+  margin-bottom: 1rem;
+}
+
+.retry-btn {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--pooja-primary), var(--pooja-primary-dark));
+  border: none;
+  border-radius: 40px;
+  color: #1a0a2e;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* ========================================
+   RESPONSIVE STYLES
+======================================== */
+
+@media (max-width: 768px) {
+  .pooja-section-main {
+    padding: 4rem 1.5rem;
+  }
+
+  .tabs-container {
+    gap: 0.5rem;
+  }
+
+  .tab-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .pooja-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .pooja-intro-content {
+    padding: 2rem;
+    margin: 1rem;
+  }
+
+  .intro-features {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .pooja-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .pooja-details-button {
+    justify-content: center;
+  }
+
+  .pooja-meta {
+    flex-wrap: wrap;
+  }
+
+  .pooja-name {
+    font-size: 1.1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-nebula,
+  .intro-star,
+  .loader-ring,
+  .pooja-image,
+  .pooja-image-overlay {
+    animation: none;
+  }
 }
